@@ -1,13 +1,69 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Upload Image for OCR</title>
+    <meta charset="UTF-8">
+    <title>OCR and Speech Synthesis App</title>
 </head>
 <body>
-    <h1>Image OCR Processing</h1>
-    <form action="/upload-image" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*">
-        <button type="submit">Upload Image</button>
+    <h1>Upload an Image for OCR and Text-to-Speech</h1>
+    <form id="uploadForm">
+        <input type="file" id="fileInput" name="image" required>
+        <button type="submit">Upload and Process</button>
     </form>
+    <div id="output"></div>
+    <audio id="audioPlayer" controls hidden></audio>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const outputDiv = document.getElementById('output');
+        const audioPlayer = document.getElementById('audioPlayer');
+
+        form.onsubmit = function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            outputDiv.innerHTML = ''; // Clear previous outputs
+            audioPlayer.hidden = true;
+
+            // Handling the upload and text extraction
+            fetch('/upload-image', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error processing image: ' + data.error);
+                    return;
+                }
+                if (data.text) {
+                    outputDiv.innerText = 'Extracted Text: ' + data.text;
+                    // Reset file input
+                    document.getElementById('fileInput').value = '';
+                    // Generating speech from extracted text
+                    return fetch('/synthesize-speech', {
+                        method: 'POST',
+                        headers: {'Content-Type': 'text/plain'},
+                        body: data.text
+                    });
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to generate speech.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                audioPlayer.src = url;
+                audioPlayer.hidden = false;
+                audioPlayer.play();
+            })
+            .catch(err => {
+                console.error('Error occurred:', err);
+                alert('Error during processing: ' + err.message);
+            });
+        };
+    </script>
 </body>
 </html>
