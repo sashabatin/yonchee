@@ -1,19 +1,19 @@
-# python imports
+# Python imports
 from flask import Flask, render_template, request, jsonify, send_file
 import requests
-import pyttsx3
+import azure.cognitiveservices.speech as speechsdk
 import tempfile
 import os
 
-# create the Flask app
+# Create the Flask app
 app = Flask(__name__)
 
-# serve the index.html page
+# Serve the index.html page
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# handle image uploads and OCR processing
+# Handle image uploads and OCR processing
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if 'image' not in request.files:
@@ -21,55 +21,65 @@ def upload_image():
     file = request.files['image']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
-    if file:
-        try:
-            text_output = process_image(file)
-            return jsonify({'text': text_output})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+    try:
+        text_output = process_image(file)
+        return jsonify({'text': text_output})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
-# process the image to extract text
+# Process image to extract text through the OCR API
 def process_image(file):
-    api_endpoint = "https://yonchee-ai-service.cognitiveservices.azure.com/vision/v3.2/ocr"
-    api_key = '38fda8ef3d6243b8bb7739e9a20f0d07' # your API key
+    # Prefer to use environment variable for security considerations
+    api_endpoint = "https://eastus.api.cognitive.microsoft.com/vision/v3.2/ocr"
+    api_key = os.environ.get('OCR_API_KEY')
     headers = {'Ocp-Apim-Subscription-Key': api_key, 'Content-Type': 'application/octet-stream'}
     params = {'language': 'unk', 'detectOrientation': 'true'}
 
-    response = requests.post(api_endpoint, headers=headers, params=params, data=file.read())
     try:
+        response = requests.post(api_endpoint, headers=headers, params=params, data=file.read())
         response.raise_for_status()
-    except requests.exceptions.HTTPError as e:
-        error_msg = f"HTTP Error: {e.response.status_code} - {e.response.reason}"
-        app.logger.error(error_msg)
-        raise Exception(f"OCR API Connection Failed: {error_msg}") from e
+    except requests.HTTPError as e:
+        app.logger.error(f"HTTP Error: {response.status_code} - {response.reason}")
+        raise Exception(f"OCR API connection failed: HTTP Error: {response.status_code} - {response.reason}")
+    except requests.RequestException as e:
+        raise Exception(f"Request failed: {str(e)}")
 
     analysis = response.json()
     if "error" in analysis:
         error_message = analysis['error']['message']
-        app.logger.error('OCR API returned an error: %s', error_message)
         raise Exception(f"OCR API Error: {error_message}")
 
-    text_output = ' '.join(
-        [' '.join([word['text'] for word in line['words']])
-         for region in analysis.get('regions', [])
-         for line in region['lines']]
-    )
+    text_output = ' '.join([' '.join([word['text'] for word in line['words']]) for region in analysis.get('regions', []) for line in region['lines']])
     return text_output
 
-# synthesize text into speech
+# Synthesize text into speech using Azure AI
 @app.route('/synthesize-speech', methods=['POST'])
 def synthesize_speech():
     text = request.data.decode('utf-8')
     if text:
-        temp_dir = tempfile.mkdtemp()
-        filename = os.path.join(temp_dir, 'output.mp3')
-        engine = pyttsx3.init()
-        engine.setProperty('rate', 150)
-        engine.save_to_file(text, filename)
-        engine.runAndWait()
-        return send_file(filename, as_attachment=True, mimetype='audio/mpeg')
+        speech_key = os.environ.get('AZURE_SPEECH_KEY')
+        service_region = os.environ.get('AZURE_SERVICE_REGION')
+        speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
+        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"  # Adjust the voice as needed
+
+        synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+        result = synthesizer.speak_text_async(text).get()
+
+        if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+            temp_dir = tempfile.mkdtemp()
+            filename = os.path.join(temp_dir, 'output.mp3')
+            # Use the correct method to save as mp3, previously a mistake of saving as wav file was observed
+            with open(filename, "wb") as audio_file:
+                audio_file.write(result.audio_data)
+            return send_file(filename, as_attachment=True, mimetype='audio/mpeg')
+        elif result.reason == speechsdk.ResultReason.Canceled:
+            cancellation_details = result.cancellation_details
+            return jsonify({'error': f"Speech synthesis canceled: {cancellation_details.reason}"}), 500
+
+        return jsonify({'error': 'Text-to-speech synthesis failed.'}), 500
+
     return jsonify({'error': 'No text provided'}), 400
 
-# run the Flask app
+# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True)
