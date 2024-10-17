@@ -45,7 +45,7 @@ stages:
           steps:
           - task: AzureWebApp@1
             inputs:
-              azureSubscription: 'sashabatin'
+              azureSubscription: 'yonchee-service-connection'
               appType: 'webAppLinux'
               appName: 'yonchee'
               runtimeStack: 'PYTHON|3.10'
