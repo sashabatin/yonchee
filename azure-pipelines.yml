@@ -1,0 +1,71 @@
+trigger:
+  branches:
+    include:
+    - main
+    - dev
+
+variables:
+  AZURE_SERVICE_REGION: 'eastus'
+  
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  jobs:
+  - job: BuildJob
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.10'
+        addToPath: true
+
+    - script: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+      displayName: 'Install dependencies'
+    - script: |
+        echo "Using OCR API Key: $(OCR_API_KEY)"
+        echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
+        echo "Deploying to region: $(AZURE_SERVICE_REGION)"
+      displayName: 'Display Variables'
+
+    - script: |
+        echo "Build completed"
+      displayName: 'Build'
+
+- stage: DeployToDev
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+  jobs:
+  - deployment: DeploymentJob
+    environment: 'yonchee_env'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: AzureWebApp@1
+            inputs:
+              azureSubscription: 'sashabatin'
+              appType: 'webAppLinux'
+              appName: 'yonchee'
+              runtimeStack: 'PYTHON|3.10'
+              package: '$(Build.SourcesDirectory)'
+              startUpCommand: 'gunicorn --workers 4 --bind 0.0.0.0:8000 app:app'
+
+# - stage: DeployToProd
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   jobs:
+#   - deployment: DeploymentJob
+#     environment: 'yourAzureProdWebAppEnvironment'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: AzureWebApp@1
+#             inputs:
+#               azureSubscription: 'YourServiceConnectionName'
+#               appType: 'webAppLinux'
+#               appName: 'YourProdWebAppName'
+#               runtimeStack: 'PYTHON|3.8'
+#               package: '$(Build.SourcesDirectory)'
+#               startUpCommand: 'gunicorn --workers 4 --bind 0.0.0.0:8000 app:app'
