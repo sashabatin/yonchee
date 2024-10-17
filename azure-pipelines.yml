@@ -35,7 +35,7 @@ stages:
       displayName: 'Build'
 
 - stage: DeployToDev
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
   jobs:
   - deployment: DeploymentJob
     environment: 'yonchee_env'
