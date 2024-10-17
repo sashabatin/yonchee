@@ -29,7 +29,6 @@ def upload_image():
 
 # Process image to extract text through the OCR API
 def process_image(file):
-    # Prefer to use environment variable for security considerations
     api_endpoint = "https://eastus.api.cognitive.microsoft.com/vision/v3.2/ocr"
     api_key = os.environ.get('OCR_API_KEY')
     headers = {'Ocp-Apim-Subscription-Key': api_key, 'Content-Type': 'application/octet-stream'}
@@ -60,7 +59,7 @@ def synthesize_speech():
         speech_key = os.environ.get('AZURE_SPEECH_KEY')
         service_region = os.environ.get('AZURE_SERVICE_REGION')
         speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"  # Adjust the voice as needed
+        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
 
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
@@ -68,7 +67,6 @@ def synthesize_speech():
         if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
             temp_dir = tempfile.mkdtemp()
             filename = os.path.join(temp_dir, 'output.mp3')
-            # Use the correct method to save as mp3, previously a mistake of saving as wav file was observed
             with open(filename, "wb") as audio_file:
                 audio_file.write(result.audio_data)
             return send_file(filename, as_attachment=True, mimetype='audio/mpeg')
@@ -79,7 +77,3 @@ def synthesize_speech():
         return jsonify({'error': 'Text-to-speech synthesis failed.'}), 500
 
     return jsonify({'error': 'No text provided'}), 400
-
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=True)
