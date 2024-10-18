@@ -15,7 +15,6 @@ stages:
   jobs:
   - job: BuildJob
     steps:
-      
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.10'
@@ -51,10 +50,9 @@ stages:
       runOnce:
         deploy:
           steps:
-
           - download: current
             artifact: requirements
-            displayName: 'Download requirements.txt artifact' 
+            displayName: 'Download requirements.txt artifact'
 
           - task: UsePythonVersion@0
             inputs:
@@ -63,9 +61,8 @@ stages:
 
           - script: |
               python -m pip install --upgrade pip
-              pip install -r requirements.txt
+              pip install -r $(Pipeline.Workspace)/requirements/requirements.txt
             displayName: 'Install dependencies'
-            workingDirectory: '$(System.DefaultWorkingDirectory)'
 
           - task: AzureWebApp@1
             inputs:
@@ -73,5 +70,5 @@ stages:
               appType: 'webAppLinux'
               appName: 'yonchee'
               runtimeStack: 'PYTHON|3.10'
-              package: '$(System.DefaultWorkingDirectory)'
+              package: '$(Build.SourcesDirectory)'
               startUpCommand: 'waitress-serve --port=8000 app:app'
