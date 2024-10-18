@@ -22,7 +22,7 @@ stages:
           echo "Using OCR API Key: $(OCR_API_KEY)"
           echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
           echo "Deploying to region: $(AZURE_SERVICE_REGION)"
-        displayName: 'Display Variables'  
+        displayName: 'Display Variables'
 
       - script: |
           python -m venv venv
@@ -66,19 +66,11 @@ stages:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
-
             az webapp config appsettings delete \
               --name yonchee \
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
-                  
-            # az webapp deploy \
-            #   --resource-group yonchee_rg \
-            #   --name yonchee \
-            #   --src-path $(Pipeline.Workspace)/python-app/release.zip \
-            #   --type zip
 
-    #Uncomment the below task if you want to use AzureWebApp@1 task instead
       - task: AzureWebApp@1
         inputs:
           azureSubscription: 'yonchee-service-connection'
