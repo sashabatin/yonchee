@@ -24,15 +24,15 @@ stages:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
       displayName: 'Install dependencies'
-    - script: |
-        echo "Using OCR API Key: $(OCR_API_KEY)"
-        echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
-        echo "Deploying to region: $(AZURE_SERVICE_REGION)"
-      displayName: 'Display Variables'
+    # - script: |
+    #     echo "Using OCR API Key: $(OCR_API_KEY)"
+    #     echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
+    #     echo "Deploying to region: $(AZURE_SERVICE_REGION)"
+    #   displayName: 'Display Variables'
 
-    - script: |
-        echo "Build completed"
-      displayName: 'Build'
+    # - script: |
+    #     echo "Build completed"
+    #   displayName: 'Build'
 
 - stage: DeployToDev
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
@@ -52,7 +52,7 @@ stages:
               python -m pip install --upgrade pip
               pip install -r requirements.txt
             displayName: 'Install dependencies'
-            workingDirectory: '$(Build.SourcesDirectory)'
+            workingDirectory: '$(System.DefaultWorkingDirectory)'
 
           - task: AzureWebApp@1
             inputs:
@@ -60,7 +60,7 @@ stages:
               appType: 'webAppLinux'
               appName: 'yonchee'
               runtimeStack: 'PYTHON|3.10'
-              package: '$(Build.SourcesDirectory)'
+              package: '$(System.DefaultWorkingDirectory)'
               startUpCommand: 'waitress-serve --port=8000 app:app'
 
 # - stage: DeployToProd
