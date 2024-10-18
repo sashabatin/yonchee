@@ -11,7 +11,7 @@ Jinja2==3.1.4
 MarkupSafe==3.0.1
 packaging==24.1
 requests==2.32.3
-urllib3==1.26.7  # Corrected version
+urllib3==1.26.15  # Corrected version
 Werkzeug==3.0.4
-azure-cognitiveservices-speech==1.19.0  # Added Azure Cognitive Services Speech SDK
+azure-cognitiveservices-speech==1.30.0  # Added Azure Cognitive Services Speech SDK
 python-dotenv==0.19.2  # Optional for easier local development
