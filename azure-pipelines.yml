@@ -66,13 +66,12 @@ stages:
           scriptType: 'bash'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            # Remove WEBSITE_RUN_FROM_PACKAGE setting
+
             az webapp config appsettings delete \
               --name yonchee \
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
-            
-            # Deploy the application using the new recommended command         
+                  
             az webapp deploy \
               --resource-group yonchee_rg \
               --name yonchee \
