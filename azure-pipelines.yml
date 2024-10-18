@@ -72,16 +72,17 @@ stages:
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
                   
-            az webapp deploy \
-              --resource-group yonchee_rg \
-              --name yonchee \
-              --src-path $(Pipeline.Workspace)/python-app/release.zip \
-              --type zip
+            # az webapp deploy \
+            #   --resource-group yonchee_rg \
+            #   --name yonchee \
+            #   --src-path $(Pipeline.Workspace)/python-app/release.zip \
+            #   --type zip
 
-    # Uncomment the below task if you want to use AzureWebApp@1 task instead
-    # - task: AzureWebApp@1
-    #   inputs:
-    #     azureSubscription: 'yonchee-service-connection'
-    #     appName: 'yonchee'
-    #     package: '$(Pipeline.Workspace)/python-app/release.zip'
-    #     startupCommand: 'waitress-serve --port=8000 app:app'
+    #Uncomment the below task if you want to use AzureWebApp@1 task instead
+      - task: AzureWebApp@1
+        inputs:
+          azureSubscription: 'yonchee-service-connection'
+          appName: 'yonchee'
+          package: '$(Pipeline.Workspace)/python-app/release.zip'
+          startupCommand: 'waitress-serve --port=8000 app:app'
+          appType: 'webAppLinux'
