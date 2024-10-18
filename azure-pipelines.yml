@@ -19,7 +19,7 @@ jobs:
       inputs:
         versionSpec: '3.10'
         addToPath: true
-        
+
     - script: |
         echo "Using OCR API Key: $(OCR_API_KEY)"
         echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
@@ -55,8 +55,9 @@ jobs:
     - download: current
       artifact: python-app
 
-    - script: unzip $(Pipeline.Workspace)/python-app/release.zip
+    - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
       displayName: 'Unzip artifact for deployment'
+      timeoutInMinutes: 10  # Increase the timeout if necessary
 
     - task: AzureCLI@2
       inputs:
