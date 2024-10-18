@@ -37,9 +37,9 @@ stages:
 
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: '$(Build.SourcesDirectory)/requirements.txt'
-        artifact: 'requirements'
-      displayName: 'Publish requirements.txt as artifact'
+        targetPath: '$(Build.SourcesDirectory)'
+        artifact: 'app'
+      displayName: 'Publish app as artifact'
 
 - stage: DeployToDev
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
@@ -51,8 +51,8 @@ stages:
         deploy:
           steps:
           - download: current
-            artifact: requirements
-            displayName: 'Download requirements.txt artifact'
+            artifact: app
+            displayName: 'Download app artifact'
 
           - task: UsePythonVersion@0
             inputs:
@@ -61,7 +61,7 @@ stages:
 
           - script: |
               python -m pip install --upgrade pip
-              pip install -r $(Pipeline.Workspace)/requirements/requirements.txt
+              pip install -r $(Pipeline.Workspace)/app/requirements.txt
             displayName: 'Install dependencies'
 
           - task: AzureWebApp@1
@@ -70,5 +70,6 @@ stages:
               appType: 'webAppLinux'
               appName: 'yonchee'
               runtimeStack: 'PYTHON|3.10'
-              package: '$(Build.SourcesDirectory)'
+              package: '$(Pipeline.Workspace)/app'
               startUpCommand: 'waitress-serve --port=8000 app:app'
+            displayName: 'Deploy to Azure Web App'
