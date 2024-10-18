@@ -59,6 +59,10 @@ jobs:
       displayName: 'Unzip artifact for deployment'
       timeoutInMinutes: 10  # Increase the timeout if necessary
 
+    - script: |
+        az webapp config appsettings delete --name yonchee --resource-group yonchee_rg --setting-names WEBSITE_RUN_FROM_PACKAGE
+      displayName: 'Remove WEBSITE_RUN_FROM_PACKAGE setting'
+
     - task: AzureCLI@2
       inputs:
         azureSubscription: 'yonchee-service-connection'
@@ -69,3 +73,9 @@ jobs:
             --resource-group yonchee_rg \
             --name yonchee \
             --src $(Pipeline.Workspace)/python-app/release.zip
+    # - task: AzureWebApp@1
+    #   inputs:
+    #     azureSubscription: 'yonchee-service-connection'
+    #     appName: 'yonchee'
+    #     package: '$(Pipeline.Workspace)/python-app/release.zip'
+    #     startupCommand: 'waitress-serve --port=8000 app:app'
