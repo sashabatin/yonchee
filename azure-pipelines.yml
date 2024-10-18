@@ -69,10 +69,11 @@ jobs:
         scriptType: 'bash'
         scriptLocation: 'inlineScript'
         inlineScript: |
-          az webapp deployment source config-zip \
+          az webapp deploy \
             --resource-group yonchee_rg \
             --name yonchee \
-            --src $(Pipeline.Workspace)/python-app/release.zip
+            --src-path $(Pipeline.Workspace)/python-app/release.zip \
+            --type zip
     # - task: AzureWebApp@1
     #   inputs:
     #     azureSubscription: 'yonchee-service-connection'
