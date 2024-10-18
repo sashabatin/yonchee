@@ -77,3 +77,8 @@ def synthesize_speech():
         return jsonify({'error': 'Text-to-speech synthesis failed.'}), 500
 
     return jsonify({'error': 'No text provided'}), 400
+
+# Run the application using Waitress if executed directly
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8000)
