@@ -71,5 +71,6 @@ stages:
               appName: 'yonchee'
               runtimeStack: 'PYTHON|3.10'
               package: '$(Pipeline.Workspace)/app'
-              startUpCommand: 'waitress-serve --port=8000 app:app'
+              startUpCommand: 'python app.py'
+              # startUpCommand: 'waitress-serve --port=8000 app:app'
             displayName: 'Deploy to Azure Web App'
