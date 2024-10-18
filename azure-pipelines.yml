@@ -1,76 +1,70 @@
 trigger:
   branches:
     include:
-    - main
-    - dev
+      - dev
+      - main
 
-variables:
-  AZURE_SERVICE_REGION: 'eastus'
-  
-pool:
-  vmImage: 'ubuntu-latest'
+# pr:
+#   branches:
+#     include:
+#       - dev
 
-stages:
-- stage: Build
-  jobs:
-  - job: BuildJob
-    steps:
+jobs:
+- job: Build
+  displayName: 'Build job'
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.10'
         addToPath: true
-
-    - script: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-      displayName: 'Install dependencies'
-
+        
     - script: |
         echo "Using OCR API Key: $(OCR_API_KEY)"
         echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
         echo "Deploying to region: $(AZURE_SERVICE_REGION)"
-      displayName: 'Display Variables'
+      displayName: 'Display Variables'  
 
     - script: |
-        echo "Build completed"
-      displayName: 'Build'
+        python -m venv venv
+        source venv/bin/activate
+        pip install -r requirements.txt
+      displayName: 'Create virtual environment and install dependencies'
 
-    - task: PublishPipelineArtifact@1
+    # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+
+    - task: ArchiveFiles@2
       inputs:
-        targetPath: '$(Build.SourcesDirectory)'
-        artifact: 'app'
-      displayName: 'Publish app as artifact'
+        rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+        includeRootFolder: false
+        archiveType: 'zip'
+        archiveFile: '$(Build.ArtifactStagingDirectory)/release.zip'
+        replaceExistingArchive: true
 
-- stage: DeployToDev
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
-  jobs:
-  - deployment: DeploymentJob
-    environment: 'yonchee_env'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - download: current
-            artifact: app
-            displayName: 'Download app artifact'
+    - publish: $(Build.ArtifactStagingDirectory)/release.zip
+      displayName: 'Publish Artifact'
+      artifact: python-app
 
-          - task: UsePythonVersion@0
-            inputs:
-              versionSpec: '3.10'
-              addToPath: true
+- job: Deploy
+  displayName: 'Deploy job'
+  dependsOn: Build
+  pool:
+    vmImage: 'ubuntu-latest'
+  steps:
+    - download: current
+      artifact: python-app
 
-          - script: |
-              python -m pip install --upgrade pip
-              pip install -r $(Pipeline.Workspace)/app/requirements.txt
-            displayName: 'Install dependencies'
+    - script: unzip $(Pipeline.Workspace)/python-app/release.zip
+      displayName: 'Unzip artifact for deployment'
 
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: 'yonchee-service-connection'
-              appType: 'webAppLinux'
-              appName: 'yonchee'
-              runtimeStack: 'PYTHON|3.10'
-              package: '$(Pipeline.Workspace)/app'
-              startUpCommand: 'python app.py'
-              # startUpCommand: 'waitress-serve --port=8000 app:app'
-            displayName: 'Deploy to Azure Web App'
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'yonchee-service-connection'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          az webapp deployment source config-zip \
+            --resource-group yonchee_rg \
+            --name yonchee \
+            --src $(Pipeline.Workspace)/python-app/release.zip
