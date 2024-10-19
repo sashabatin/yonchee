@@ -1,19 +1,15 @@
-# Python imports
 from flask import Flask, render_template, request, jsonify, send_file
 import requests
 import azure.cognitiveservices.speech as speechsdk
 import tempfile
 import os
 
-# Create the Flask app
 app = Flask(__name__)
 
-# Serve the index.html page
 @app.route('/')
 def index():
     return render_template('index.html')
 
-# Handle image uploads and OCR processing
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if 'image' not in request.files:
@@ -27,9 +23,7 @@ def upload_image():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-# Process image to extract text through the OCR API
 def process_image(file):
-    # Prefer to use environment variable for security considerations
     api_endpoint = "https://eastus.api.cognitive.microsoft.com/vision/v3.2/ocr"
     api_key = os.environ.get('OCR_API_KEY')
     headers = {'Ocp-Apim-Subscription-Key': api_key, 'Content-Type': 'application/octet-stream'}
@@ -52,7 +46,6 @@ def process_image(file):
     text_output = ' '.join([' '.join([word['text'] for word in line['words']]) for region in analysis.get('regions', []) for line in region['lines']])
     return text_output
 
-# Synthesize text into speech using Azure AI
 @app.route('/synthesize-speech', methods=['POST'])
 def synthesize_speech():
     text = request.data.decode('utf-8')
@@ -60,7 +53,7 @@ def synthesize_speech():
         speech_key = os.environ.get('AZURE_SPEECH_KEY')
         service_region = os.environ.get('AZURE_SERVICE_REGION')
         speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"  # Adjust the voice as needed
+        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
 
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
@@ -68,7 +61,6 @@ def synthesize_speech():
         if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
             temp_dir = tempfile.mkdtemp()
             filename = os.path.join(temp_dir, 'output.mp3')
-            # Use the correct method to save as mp3, previously a mistake of saving as wav file was observed
             with open(filename, "wb") as audio_file:
                 audio_file.write(result.audio_data)
             return send_file(filename, as_attachment=True, mimetype='audio/mpeg')
@@ -80,6 +72,6 @@ def synthesize_speech():
 
     return jsonify({'error': 'No text provided'}), 400
 
-# Run the Flask app
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=8000)
