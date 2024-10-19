@@ -1,71 +1,122 @@
+variables:
+- group: yonchee-var-group
+
 trigger:
   branches:
     include:
-    - main
-    - dev
-
-variables:
-  AZURE_SERVICE_REGION: 'eastus'
-  
-pool:
-  vmImage: 'ubuntu-latest'
+      - dev
+      - main
 
 stages:
 - stage: Build
+  displayName: 'Build Stage'
   jobs:
   - job: BuildJob
+    displayName: 'Build Job'
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.10'
-        addToPath: true
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.10'
+          addToPath: true
 
-    - script: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-      displayName: 'Install dependencies'
-    - script: |
-        echo "Using OCR API Key: $(OCR_API_KEY)"
-        echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
-        echo "Deploying to region: $(AZURE_SERVICE_REGION)"
-      displayName: 'Display Variables'
+      - script: |
+          echo "Using OCR API Key: $(OCR_API_KEY)"
+          echo "Using Azure Speech Key: $(AZURE_SPEECH_KEY)"
+          echo "Deploying to region: $(AZURE_SERVICE_REGION)"
+        displayName: 'Display Variables'
 
-    - script: |
-        echo "Build completed"
-      displayName: 'Build'
+      - script: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+        displayName: 'Create virtual environment and install dependencies'
 
-- stage: DeployToDev
-#  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/dev'))
+      # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
+
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
+          includeRootFolder: false
+          archiveType: 'zip'
+          archiveFile: '$(Build.ArtifactStagingDirectory)/release.zip'
+          replaceExistingArchive: true
+
+      - publish: $(Build.ArtifactStagingDirectory)/release.zip
+        displayName: 'Publish Artifact'
+        artifact: python-app
+
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Build
   jobs:
-  - deployment: DeploymentJob
-    environment: 'yonchee_env'
-    strategy:
-      runOnce:
-        deploy:
-          steps:
-          - task: AzureWebApp@1
-            inputs:
-              azureSubscription: 'yonchee-service-connection'
-              appType: 'webAppLinux'
-              appName: 'yonchee'
-              runtimeStack: 'PYTHON|3.10'
-              package: '$(Build.SourcesDirectory)'
-              startUpCommand: 'gunicorn --workers 4 --bind 0.0.0.0:8000 app:app'
+  - job: DeployJob
+    displayName: 'Deploy Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+      - download: current
+        artifact: python-app
 
-# - stage: DeployToProd
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-#   jobs:
-#   - deployment: DeploymentJob
-#     environment: 'yourAzureProdWebAppEnvironment'
-#     strategy:
-#       runOnce:
-#         deploy:
-#           steps:
-#           - task: AzureWebApp@1
-#             inputs:
-#               azureSubscription: 'YourServiceConnectionName'
-#               appType: 'webAppLinux'
-#               appName: 'YourProdWebAppName'
-#               runtimeStack: 'PYTHON|3.8'
-#               package: '$(Build.SourcesDirectory)'
-#               startUpCommand: 'gunicorn --workers 4 --bind 0.0.0.0:8000 app:app'
+      - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
+        displayName: 'Unzip artifact for deployment'
+        timeoutInMinutes: 10  # Increase the timeout if necessary
+
+      # - task: AzurePowerShell@5
+      #   inputs:
+      #     azureSubscription: 'yonchee-service-connection'
+      #     ScriptType: 'InlineScript'
+      #     InlineScript: |
+
+      #       # Fetch the current app settings
+      #       $appSettings = az webapp config appsettings list --name yonchee --resource-group yonchee_rg | ConvertFrom-Json
+
+      #       # Check if WEBSITE_RUN_FROM_PACKAGE is set and equal to 1
+      #       $runFromPackage = $appSettings | Where-Object { $_.name -eq "WEBSITE_RUN_FROM_PACKAGE" } | Select-Object -ExpandProperty value
+
+      #       if ($runFromPackage -eq "1") {
+      #         Write-Host "WEBSITE_RUN_FROM_PACKAGE is set. Deleting setting..."
+      #         # Delete the WEBSITE_RUN_FROM_PACKAGE setting
+      #         az webapp config appsettings delete --name yonchee --resource-group yonchee_rg --setting-names WEBSITE_RUN_FROM_PACKAGE
+      #       }
+      #       else {
+      #         Write-Host "WEBSITE_RUN_FROM_PACKAGE is not set or not '1'. No action needed."
+      #       }
+
+      #       # Set new environment variables
+      #       Write-Host "Setting new environment variables..."
+      #       az webapp config appsettings set --name yonchee --resource-group yonchee_rg --settings `
+      #         OCR_API_KEY=$(OCR_API_KEY) `
+      #         AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) `
+      #         AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)
+      #     azurePowerShellVersion: 'LatestVersion'
+        
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'yonchee-service-connection'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az webapp config appsettings delete \
+              --name yonchee \
+              --resource-group yonchee_rg \
+              --setting-names WEBSITE_RUN_FROM_PACKAGE
+      - task: AzureCLI@2
+        inputs:
+          azureSubscription: 'yonchee-service-connection'
+          scriptType: 'bash'
+          scriptLocation: 'inlineScript'
+          inlineScript: |
+            az webapp config appsettings set \
+              --name yonchee \
+              --resource-group yonchee_rg \
+              --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)      
+
+      - task: AzureWebApp@1
+        inputs:
+          azureSubscription: 'yonchee-service-connection'
+          appName: 'yonchee'
+          package: '$(Pipeline.Workspace)/python-app/release.zip'
+          startupCommand: 'waitress-serve --port=8000 app:app'
+          appType: 'webAppLinux'
