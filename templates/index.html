@@ -2,27 +2,231 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OCR and Speech Synthesis App</title>
+    <title>Yonchee Text-to-Speech Application</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #FFEB3B, #FFF);
+            color: #000;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        header {
+            width: 100%;
+            background-color: #000;
+            color: #FFF;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+            font-family: 'Pacifico', cursive;
+            background: linear-gradient(to right, #007BFF, #f5f5dc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-left: 20px;
+        }
+        header button {
+            background-color: #000;
+            color: #FFF;
+            border: none;
+            padding: 15px 30px; /* Match size of Make Magic button */
+            font-size: 18px; /* Match size of Make Magic button */
+            cursor: pointer;
+            border-radius: 10px; /* Match shape of Make Magic button */
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        header button:hover {
+            background-color: #333;
+        }
+        main {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 20px;
+            max-width: 1200px;
+        }
+        .left-section, .right-section {
+            display: flex;
+            flex-direction: column;
+        }
+        .left-section {
+            align-items: flex-start;
+            flex: 1;
+            margin-left: 40px; /* Move to the right by 2cm */
+            max-width: 45%; /* Adjust width */
+        }
+        .right-section {
+            align-items: flex-end;
+            flex: 1;
+            max-width: 45%; /* Adjust width */
+        }
+        .right-section .card {
+            max-width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f5f5dc;
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 100%;
+        }
+        h2 {
+            font-size: 40px;
+            margin-bottom: 20px;
+            background: linear-gradient(to bottom, #000, #808080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            width: 100%; /* Ensure form takes full width */
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            width: 100%; /* Ensure buttons take full width */
+        }
+        label, button {
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            width: calc(50% - 5px); /* Ensure buttons take half the width of the parent */
+            height: 60px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
+        }
+        label:hover, button:hover {
+            background-color: #000000;
+        }
+        #makeMagicButton {
+            background: linear-gradient(to right, #007BFF, #f5f5dc); /* Gradient color */
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        #makeMagicButton::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(to right, #007BFF, #f5f5dc);
+            z-index: -1;
+            transition: all 0.5s ease;
+            opacity: 0;
+        }
+        #makeMagicButton:hover::before {
+            opacity: 1;
+            top: -30%;
+            left: -30%;
+            width: 160%;
+            height: 160%;
+        }
+        #audioPlayer {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        #customPlayPause {
+            background-color: #000;
+            color: #FFF;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+        #customPlayPause:hover {
+            background-color: #333;
+        }
+        .card {
+            max-width: 100%;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f5f5dc;
+            border-radius: 10px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Upload an Image for OCR and Text-to-Speech</h1>
-    <form id="uploadForm">
-        <input type="file" id="fileInput" name="image" required>
-        <button type="submit">Upload and Process</button>
-    </form>
-    <div id="output"></div>
-    <audio id="audioPlayer" controls hidden></audio>
+    <header>
+        <h1>Yonchee</h1>
+        <button>Create an Account</button>
+    </header>
+    <main>
+        <div class="left-section">
+            <h2>Text to Speech Service</h2>
+            <form id="uploadForm">
+                <div class="button-group">
+                    <label for="fileInput">Select File</label>
+                    <input type="file" id="fileInput" name="image" required>
+                    <button id="makeMagicButton" type="submit">Make Magic</button>
+                </div>
+                <button id="customPlayPause">Play</button>
+                <audio id="audioPlayer" controls></audio>
+                <div id="output" class="card"></div>
+            </form>
+        </div>
+    </main>
 
     <script>
         const form = document.getElementById('uploadForm');
         const outputDiv = document.getElementById('output');
         const audioPlayer = document.getElementById('audioPlayer');
+        const customPlayPause = document.getElementById('customPlayPause');
+        const fileInput = document.getElementById('fileInput');
+        const fileLabel = document.querySelector('label[for="fileInput"]');
+
+        fileInput.addEventListener('change', function() {
+            fileLabel.textContent = fileInput.files[0].name;
+        });
 
         form.onsubmit = function(event) {
             event.preventDefault();
             const formData = new FormData(form);
             outputDiv.innerHTML = ''; // Clear previous outputs
             audioPlayer.hidden = true;
+            customPlayPause.hidden = true;
 
             // Handling the upload and text extraction
             fetch('/upload-image', {
@@ -39,6 +243,7 @@
                     outputDiv.innerText = 'Extracted Text: ' + data.text;
                     // Reset file input
                     document.getElementById('fileInput').value = '';
+                    fileLabel.textContent = 'Select File';
                     // Generating speech from extracted text
                     return fetch('/synthesize-speech', {
                         method: 'POST',
@@ -57,7 +262,18 @@
                 const url = window.URL.createObjectURL(blob);
                 audioPlayer.src = url;
                 audioPlayer.hidden = false;
-                audioPlayer.play();
+                customPlayPause.hidden = false;
+                customPlayPause.innerText = 'Play';
+
+                customPlayPause.onclick = function() {
+                    if (audioPlayer.paused) {
+                        audioPlayer.play();
+                        customPlayPause.innerText = 'Pause';
+                    } else {
+                        audioPlayer.pause();
+                        customPlayPause.innerText = 'Play';
+                    }
+                };
             })
             .catch(err => {
                 console.error('Error occurred:', err);
