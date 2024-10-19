@@ -35,20 +35,6 @@
             -webkit-text-fill-color: transparent;
             margin-left: 20px;
         }
-        header button {
-            background-color: #000;
-            color: #FFF;
-            border: none;
-            padding: 15px 30px; /* Match size of Make Magic button */
-            font-size: 18px; /* Match size of Make Magic button */
-            cursor: pointer;
-            border-radius: 10px; /* Match shape of Make Magic button */
-            margin-right: 10px;
-            transition: background-color 0.3s ease;
-        }
-        header button:hover {
-            background-color: #333;
-        }
         main {
             display: flex;
             justify-content: space-between;
@@ -186,12 +172,24 @@
             width: 100%;
             max-width: 600px;
         }
+        #languageSelect {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            padding: 15px 30px; /* Increase padding */
+            font-size: 20px; /* Increase font size */
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            background: linear-gradient(to right, #007BFF, #f5f5dc);
+            color: #000;
+            font-weight: bold;
+            cursor: pointer; /* Make it look like a button */
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Yonchee</h1>
-        <button>Create an Account</button>
     </header>
     <main>
         <div class="left-section">
@@ -208,6 +206,11 @@
             </form>
         </div>
     </main>
+    <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="uk">Ukrainian</option>
+        <option value="ru">Russian</option>
+    </select>
 
     <script>
         const form = document.getElementById('uploadForm');
@@ -216,6 +219,7 @@
         const customPlayPause = document.getElementById('customPlayPause');
         const fileInput = document.getElementById('fileInput');
         const fileLabel = document.querySelector('label[for="fileInput"]');
+        const languageSelect = document.getElementById('languageSelect');
 
         fileInput.addEventListener('change', function() {
             fileLabel.textContent = fileInput.files[0].name;
@@ -247,8 +251,8 @@
                     // Generating speech from extracted text
                     return fetch('/synthesize-speech', {
                         method: 'POST',
-                        headers: {'Content-Type': 'text/plain'},
-                        body: data.text
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({ text: data.text, language: languageSelect.value })
                     });
                 }
             })
