@@ -17,6 +17,7 @@
             align-items: center;
             min-height: 100vh;
         }
+
         header {
             width: 100%;
             background-color: #000;
@@ -26,6 +27,7 @@
             align-items: center;
             padding: 10px 20px;
         }
+
         header h1 {
             margin: 0;
             font-size: 36px;
@@ -35,6 +37,7 @@
             -webkit-text-fill-color: transparent;
             margin-left: 20px;
         }
+
         main {
             display: flex;
             justify-content: space-between;
@@ -42,21 +45,26 @@
             padding: 20px;
             max-width: 1200px;
         }
-        .left-section, .right-section {
+
+        .left-section,
+        .right-section {
             display: flex;
             flex-direction: column;
         }
+
         .left-section {
             align-items: flex-start;
             flex: 1;
-            margin-left: 40px; /* Move to the right by 2cm */
-            max-width: 45%; /* Adjust width */
+            margin-left: 40px;
+            max-width: 45%;
         }
+
         .right-section {
             align-items: flex-end;
             flex: 1;
-            max-width: 45%; /* Adjust width */
+            max-width: 45%;
         }
+
         .right-section .card {
             max-width: 100%;
             max-height: 400px;
@@ -68,6 +76,7 @@
             margin-top: 20px;
             width: 100%;
         }
+
         h2 {
             font-size: 40px;
             margin-bottom: 20px;
@@ -75,47 +84,72 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         form {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             margin-bottom: 20px;
-            width: 100%; /* Ensure form takes full width */
+            width: 100%;
         }
+
         input[type="file"] {
             display: none;
         }
-        .button-group {
+
+        .button-group,
+        .audio-controls,
+        .additional-controls {
             display: flex;
-            gap: 10px;
+            justify-content: space-between;
             margin-bottom: 20px;
-            width: 100%; /* Ensure buttons take full width */
+            width: 100%;
+            max-width: 800px; /* Ensures the total width of the buttons matches the player width */
         }
-        label, button {
-            background-color: #000000;
-            color: #ffffff;
-            border: none;
+
+        .button-group label,
+        .button-group button,
+        .audio-controls button,
+        .additional-controls button,
+        .additional-controls a {
+            background-color: #ff4081;
+            color: #FFF;
+            font-size: 20px;
             padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            width: calc(50% - 5px); /* Ensure buttons take half the width of the parent */
-            height: 60px;
+            border: 2px solid #FFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 10px;
-            transition: background-color 0.3s ease;
+            cursor: pointer;
+            flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
         }
-        label:hover, button:hover {
-            background-color: #000000;
+
+        .audio-controls button {
+            flex-basis: calc(33.33% - 10px); /* Ensures the button width is third of the parent */
         }
+
+        .button-group label:hover,
+        .button-group button:hover,
+        .audio-controls button:hover,
+        .additional-controls button:hover,
+        .additional-controls a:hover {
+            background-color: #d83670;
+            transform: scale(1.05);
+        }
+
+        /* Gradient and animation for Play/Pause and Make Magic buttons */
+        #togglePlayPauseButton,
         #makeMagicButton {
-            background: linear-gradient(to right, #007BFF, #f5f5dc); /* Gradient color */
+            background: linear-gradient(to right, #007BFF, #FFEB3B);
             position: relative;
             overflow: hidden;
             z-index: 1;
         }
+
+        #togglePlayPauseButton::before,
         #makeMagicButton::before {
             content: '';
             position: absolute;
@@ -123,43 +157,31 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(to right, #007BFF, #f5f5dc);
-            z-index: -1;
+            background: inherit;
             transition: all 0.5s ease;
+            z-index: -1;
+            transform: skewY(10deg);
+        }
+
+        #togglePlayPauseButton:hover::before,
+        #makeMagicButton:hover::before {
+            top: -70%;
+            left: -70%;
+            width: 300%;
+            height: 300%;
             opacity: 0;
         }
-        #makeMagicButton:hover::before {
-            opacity: 1;
-            top: -30%;
-            left: -30%;
-            width: 160%;
-            height: 160%;
-        }
+
         #audioPlayer {
-            margin-top: 20px;
+            margin-top: 60px; /* Increase margin to move the audio player lower */
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
+            height: 50px;
+            border: 2px solid #000; /* Add border for contrast */
+            border-radius: 10px; /* Rounded corners for a better look */
+            background-color: #FFF; /* Background color for contrast */
         }
-        #customPlayPause {
-            background-color: #000;
-            color: #FFF;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            cursor: pointer;
-            border-radius: 10px;
-            width: 100%;
-            max-width: 600px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
-        }
-        #customPlayPause:hover {
-            background-color: #333;
-        }
+
         .card {
             max-width: 100%;
             max-height: 400px;
@@ -172,18 +194,33 @@
             width: 100%;
             max-width: 600px;
         }
+
         #languageSelect {
             position: absolute;
             top: 10px;
             right: 20px;
-            padding: 15px 30px; /* Increase padding */
-            font-size: 20px; /* Increase font size */
+            padding: 15px 30px;
+            font-size: 20px;
             border-radius: 10px;
             border: 1px solid #ccc;
             background: linear-gradient(to right, #007BFF, #f5f5dc);
             color: #000;
             font-weight: bold;
-            cursor: pointer; /* Make it look like a button */
+            cursor: pointer;
+        }
+
+        /* Style for the live region */
+        #liveRegion {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            border: 0;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            clip-path: inset(50%);
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -200,10 +237,20 @@
                     <input type="file" id="fileInput" name="image" required>
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
-                <button id="customPlayPause">Play</button>
+                <div class="audio-controls">
+                    <button id="togglePlayPauseButton">Play</button>
+                    <button id="rewindButton">Rewind</button>
+                    <button id="forwardButton">Forward</button>
+                </div>
                 <audio id="audioPlayer" controls></audio>
+                <div class="additional-controls">
+                    <a id="downloadButton" hidden>Download</a> <!-- Download button -->
+                    <button id="playbackSpeedButton" hidden>Speed: 1x</button> <!-- Playback Speed button -->
+                </div>
                 <div id="output" class="card"></div>
             </form>
+            <!-- Live region for non-disruptive feedback -->
+            <div id="liveRegion" aria-live="polite"></div>
         </div>
     </main>
     <select id="languageSelect">
@@ -216,21 +263,86 @@
         const form = document.getElementById('uploadForm');
         const outputDiv = document.getElementById('output');
         const audioPlayer = document.getElementById('audioPlayer');
-        const customPlayPause = document.getElementById('customPlayPause');
         const fileInput = document.getElementById('fileInput');
+        const togglePlayPauseButton = document.getElementById('togglePlayPauseButton');
+        const downloadButton = document.getElementById('downloadButton'); // Download button
+        const rewindButton = document.getElementById('rewindButton');
+        const forwardButton = document.getElementById('forwardButton');
+        const playbackSpeedButton = document.getElementById('playbackSpeedButton'); // Playback speed button
         const fileLabel = document.querySelector('label[for="fileInput"]');
         const languageSelect = document.getElementById('languageSelect');
+        const liveRegion = document.getElementById('liveRegion'); // Live region for feedback
+
+        const translations = {
+            en: {
+                selectFile: 'Select File',
+                makeMagic: 'Make Magic',
+                play: 'Play',
+                pause: 'Pause',
+                rewind: '<< Rewind ',
+                forward: ' Forward >>',
+                download: 'Download',
+                speed: 'Speed: 1x'
+            },
+            uk: {
+                selectFile: 'Вибрати файл',
+                makeMagic: 'Створити магію',
+                play: 'Відтворити',
+                pause: 'Пауза',
+                rewind: '<< Перемотати назад',
+                forward: '>> Перемотати вперед',
+                download: 'Завантажити',
+                speed: 'Швидкість: 1x'
+            },
+            ru: {
+                selectFile: 'Выбрать файл',
+                makeMagic: 'Создать магию',
+                play: 'Старт',
+                pause: 'Пауза',
+                rewind: '<< Перемотать назад',
+                forward: '>> Перемотать вперед',
+                download: 'Скачать',
+                speed: 'Скорость: 1x'
+            }
+        };
+
+        const updateInterfaceLanguage = (lang) => {
+            fileLabel.textContent = translations[lang].selectFile;
+            makeMagicButton.textContent = translations[lang].makeMagic;
+            togglePlayPauseButton.textContent = translations[lang].play;
+            rewindButton.textContent = translations[lang].rewind;
+            forwardButton.textContent = translations[lang].forward;
+            downloadButton.textContent = translations[lang].download;
+            playbackSpeedButton.textContent = translations[lang].speed;
+        };
+
+        const setUpLanguage = (lang) => {
+            if (translations[lang]) {
+                updateInterfaceLanguage(lang);
+            } else {
+                updateInterfaceLanguage('en');
+            }
+        };
+
+        languageSelect.addEventListener('change', function() {
+            setUpLanguage(languageSelect.value);
+        });
+
+        // Example setting language after processing OCR or user selects the language from the selector
+        setUpLanguage('en'); // Default to English, can be set dynamically as needed
 
         fileInput.addEventListener('change', function() {
             fileLabel.textContent = fileInput.files[0].name;
         });
 
-        form.onsubmit = function(event) {
+        form.addEventListener('submit', function(event) {
             event.preventDefault();
             const formData = new FormData(form);
             outputDiv.innerHTML = ''; // Clear previous outputs
-            audioPlayer.hidden = true;
-            customPlayPause.hidden = true;
+            resetAudioPlayer();
+
+            let originalFileName = fileInput.files[0]?.name.split('.').slice(0, -1).join('.') || generateUUID();
+            let audioFileName = `${originalFileName}.mp3`;
 
             // Handling the upload and text extraction
             fetch('/upload-image', {
@@ -240,19 +352,24 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    alert('Error processing image: ' + data.error);
+                    liveRegion.textContent = 'Error processing image: ' + data.error;
                     return;
                 }
                 if (data.text) {
                     outputDiv.innerText = 'Extracted Text: ' + data.text;
                     // Reset file input
                     document.getElementById('fileInput').value = '';
-                    fileLabel.textContent = 'Select File';
+                    fileLabel.textContent = translations[languageSelect.value]?.selectFile || 'Select File';
                     // Generating speech from extracted text
                     return fetch('/synthesize-speech', {
                         method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({ text: data.text, language: languageSelect.value })
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            text: data.text,
+                            language: languageSelect.value
+                        })
                     });
                 }
             })
@@ -265,25 +382,95 @@
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
                 audioPlayer.src = url;
-                audioPlayer.hidden = false;
-                customPlayPause.hidden = false;
-                customPlayPause.innerText = 'Play';
 
-                customPlayPause.onclick = function() {
+                // Set the href and download attributes for the Download button
+                downloadButton.href = url;
+                downloadButton.setAttribute('download', audioFileName);
+
+                togglePlayPauseButton.hidden = false;
+                rewindButton.hidden = false;
+                forwardButton.hidden = false;
+                downloadButton.hidden = false;
+                playbackSpeedButton.hidden = false;
+
+                // Automatically play the audio
+                audioPlayer.play();
+                togglePlayPauseButton.innerText = translations[languageSelect.value].pause;
+                liveRegion.textContent = 'Playing audio';
+
+                togglePlayPauseButton.onclick = () => {
                     if (audioPlayer.paused) {
                         audioPlayer.play();
-                        customPlayPause.innerText = 'Pause';
+                        togglePlayPauseButton.innerText = translations[languageSelect.value].pause;
+                        liveRegion.textContent = 'Playing audio';
                     } else {
                         audioPlayer.pause();
-                        customPlayPause.innerText = 'Play';
+                        togglePlayPauseButton.innerText = translations[languageSelect.value].play;
+                        liveRegion.textContent = 'Audio paused';
+                    }
+                };
+
+                rewindButton.onclick = () => {
+                    audioPlayer.currentTime -= 5; // Rewind 5 seconds
+                    liveRegion.textContent = `Jumped to ${audioPlayer.currentTime.toFixed(2)} seconds`;
+                };
+
+                forwardButton.onclick = () => {
+                    audioPlayer.currentTime += 5; // Forward 5 seconds
+                    liveRegion.textContent = `Jumped to ${audioPlayer.currentTime.toFixed(2)} seconds`;
+                };
+
+                let playbackSpeeds = [0.75, 1, 1.25];
+                playbackSpeedButton.onclick = () => {
+                    let currentSpeed = audioPlayer.playbackRate;
+                    let newSpeedIndex = (playbackSpeeds.indexOf(currentSpeed) + 1) % playbackSpeeds.length;
+                    let newSpeed = playbackSpeeds[newSpeedIndex];
+                    audioPlayer.playbackRate = newSpeed;
+                    playbackSpeedButton.textContent = `${translations[languageSelect.value]?.speed.split(":")[0] || 'Speed'}: ${newSpeed}x`;
+                    liveRegion.textContent = `Playback speed changed to ${newSpeed}x`;
+                };
+
+                // Keyboard navigation for audio controls
+                document.onkeydown = (e) => {
+                    if (e.key === 'ArrowLeft') {
+                        audioPlayer.currentTime -= 5; // Rewind 5 seconds
+                        liveRegion.textContent = `Jumped to ${audioPlayer.currentTime.toFixed(2)} seconds`;
+                        e.preventDefault();
+                    } else if (e.key === 'ArrowRight') {
+                        audioPlayer.currentTime += 5; // Forward 5 seconds
+                        liveRegion.textContent = `Jumped to ${audioPlayer.currentTime.toFixed(2)} seconds`;
+                        e.preventDefault();
+                    } else if (e.key === ' ') {
+                        if (audioPlayer.paused) {
+                            audioPlayer.play();
+                            togglePlayPauseButton.innerText = translations[languageSelect.value].pause;
+                            liveRegion.textContent = 'Playing audio';
+                        } else {
+                            audioPlayer.pause();
+                            togglePlayPauseButton.innerText = translations[languageSelect.value].play;
+                            liveRegion.textContent = 'Audio paused';
+                        }
+                        e.preventDefault();
                     }
                 };
             })
             .catch(err => {
                 console.error('Error occurred:', err);
-                alert('Error during processing: ' + err.message);
+                liveRegion.textContent = 'Error during processing: ' + err.message;
             });
-        };
+        });
+
+        function resetAudioPlayer() {
+            audioPlayer.src = '';
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            togglePlayPauseButton.innerText = translations[languageSelect.value]?.play || 'Play';
+            downloadButton.hidden = true;
+            playbackSpeedButton.hidden = true;
+            togglePlayPauseButton.hidden = true;
+            rewindButton.hidden = true;
+            forwardButton.hidden = true;
+        }
     </script>
 </body>
 </html>
