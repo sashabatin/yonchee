@@ -54,12 +54,22 @@ def process_image(file):
 # Synthesize text into speech using Azure AI
 @app.route('/synthesize-speech', methods=['POST'])
 def synthesize_speech():
-    text = request.data.decode('utf-8')
+    data = request.get_json()
+    text = data.get('text')
+    language = data.get('language', 'en')
+
     if text:
         speech_key = os.environ.get('AZURE_SPEECH_KEY')
         service_region = os.environ.get('AZURE_SERVICE_REGION')
         speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
-        speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
+
+        # Set the voice based on the chosen language
+        if language == 'uk':
+            speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
+        elif language == 'ru':
+            speech_config.speech_synthesis_voice_name = "ru-RU-DmitryNeural"
+        else:  # Default to English
+            speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"
 
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
