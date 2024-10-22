@@ -1,9 +1,13 @@
 # Python imports
 from flask import Flask, render_template, request, jsonify, send_file
+from dotenv import load_dotenv
 import requests
 import azure.cognitiveservices.speech as speechsdk
 import tempfile
 import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Create the Flask app
 app = Flask(__name__)

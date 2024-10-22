@@ -1,18 +1,6 @@
-blinker==1.8.2
-certifi==2024.8.30
-charset-normalizer==3.4.0
-click==8.1.7
-colorama==0.4.6
+azure-cognitiveservices-speech==1.30.0
 Flask==3.0.3
-gunicorn==23.0.0
-idna==3.10
-itsdangerous==2.2.0
-Jinja2==3.1.4
-MarkupSafe==3.0.1
-packaging==24.1
+opencv-python==4.10.0.84
+pyttsx3==2.98
 requests==2.32.3
-urllib3==1.26.15  # Corrected version
-Werkzeug==3.0.4
-waitress==2.1.2  # Added Waitress WSGI server
-azure-cognitiveservices-speech==1.30.0  # Added Azure Cognitive Services Speech SDK
-python-dotenv==0.19.2  # Optional for easier local development
+waitress==3.0.0 
