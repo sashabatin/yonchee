@@ -136,3 +136,4 @@ stages:
           package: '$(Pipeline.Workspace)/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
+          
