@@ -238,11 +238,11 @@
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
                 <div class="audio-controls">
-                    <button id="togglePlayPauseButton">Play</button>
-                    <button id="rewindButton">Rewind</button>
-                    <button id="forwardButton">Forward</button>
+                    <button id="togglePlayPauseButton" hidden>Play</button>
+                    <button id="rewindButton" hidden>Rewind</button>
+                    <button id="forwardButton" hidden>Forward</button>
                 </div>
-                <audio id="audioPlayer" controls></audio>
+                <audio id="audioPlayer" controls hidden></audio>
                 <div class="additional-controls">
                     <a id="downloadButton" hidden>Download</a> <!-- Download button -->
                     <button id="playbackSpeedButton" hidden>Speed: 1x</button> <!-- Playback Speed button -->
@@ -265,13 +265,13 @@
         const audioPlayer = document.getElementById('audioPlayer');
         const fileInput = document.getElementById('fileInput');
         const togglePlayPauseButton = document.getElementById('togglePlayPauseButton');
-        const downloadButton = document.getElementById('downloadButton'); // Download button
+        const downloadButton = document.getElementById('downloadButton');
         const rewindButton = document.getElementById('rewindButton');
         const forwardButton = document.getElementById('forwardButton');
-        const playbackSpeedButton = document.getElementById('playbackSpeedButton'); // Playback speed button
+        const playbackSpeedButton = document.getElementById('playbackSpeedButton');
         const fileLabel = document.querySelector('label[for="fileInput"]');
         const languageSelect = document.getElementById('languageSelect');
-        const liveRegion = document.getElementById('liveRegion'); // Live region for feedback
+        const liveRegion = document.getElementById('liveRegion');
 
         const translations = {
             en: {
@@ -308,7 +308,7 @@
 
         const updateInterfaceLanguage = (lang) => {
             fileLabel.textContent = translations[lang].selectFile;
-            makeMagicButton.textContent = translations[lang].makeMagic;
+            document.getElementById('makeMagicButton').textContent = translations[lang].makeMagic;
             togglePlayPauseButton.textContent = translations[lang].play;
             rewindButton.textContent = translations[lang].rewind;
             forwardButton.textContent = translations[lang].forward;
@@ -470,6 +470,14 @@
             togglePlayPauseButton.hidden = true;
             rewindButton.hidden = true;
             forwardButton.hidden = true;
+        }
+
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
         }
     </script>
 </body>

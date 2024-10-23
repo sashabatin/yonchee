@@ -93,6 +93,7 @@ stages:
       #     azurePowerShellVersion: 'LatestVersion'
         
       - task: AzureCLI@2
+        displayName: Delete WEBSITE_RUN_FROM_PACKAGE
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -102,7 +103,9 @@ stages:
               --name yonchee \
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
+
       - task: AzureCLI@2
+        displayName: Configurating variables
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -114,6 +117,7 @@ stages:
               --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)      
 
       - task: AzureWebApp@1
+        displayName: Deploy Yonchee app
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee'

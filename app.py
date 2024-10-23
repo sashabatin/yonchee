@@ -31,6 +31,8 @@ def upload_image():
 def process_image(file):
     api_endpoint = "https://eastus.api.cognitive.microsoft.com/vision/v3.2/ocr"
     api_key = os.environ.get('OCR_API_KEY')
+    if not api_key:
+        raise Exception("OCR_API_KEY is not set")
     headers = {'Ocp-Apim-Subscription-Key': api_key, 'Content-Type': 'application/octet-stream'}
     params = {'language': 'unk', 'detectOrientation': 'true'}
 
