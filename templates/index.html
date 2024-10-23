@@ -222,6 +222,25 @@
             clip-path: inset(50%);
             white-space: nowrap;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .button-group,
+            .audio-controls,
+            .additional-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .button-group label,
+            .button-group button,
+            .audio-controls button,
+            .additional-controls button,
+            .additional-controls a {
+                flex-basis: 100%;
+                margin-bottom: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -234,18 +253,18 @@
             <form id="uploadForm">
                 <div class="button-group">
                     <label for="fileInput">Select File</label>
-                    <input type="file" id="fileInput" name="image" required>
+                    <input type="file" id="fileInput" name="image" accept="image/*" capture="camera" required>
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
                 <div class="audio-controls">
-                    <button id="togglePlayPauseButton" hidden>Play</button>
-                    <button id="rewindButton" hidden>Rewind</button>
-                    <button id="forwardButton" hidden>Forward</button>
+                    <button id="togglePlayPauseButton">Play</button>
+                    <button id="rewindButton">Rewind</button>
+                    <button id="forwardButton">Forward</button>
                 </div>
-                <audio id="audioPlayer" controls hidden></audio>
+                <audio id="audioPlayer" controls></audio>
                 <div class="additional-controls">
-                    <a id="downloadButton" hidden>Download</a> <!-- Download button -->
-                    <button id="playbackSpeedButton" hidden>Speed: 1x</button> <!-- Playback Speed button -->
+                    <a id="downloadButton">Download</a> <!-- Download button -->
+                    <button id="playbackSpeedButton">Speed: 1x</button> <!-- Playback Speed button -->
                 </div>
                 <div id="output" class="card"></div>
             </form>
