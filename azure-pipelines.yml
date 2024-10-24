@@ -54,6 +54,11 @@ stages:
       - download: current
         artifact: python-app
 
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.10'
+          addToPath: true
+
       - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
@@ -100,6 +105,11 @@ stages:
       - download: current
         artifact: python-app
 
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.10'
+          addToPath: true
+          
       - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
@@ -136,4 +146,3 @@ stages:
           package: '$(Pipeline.Workspace)/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
-          

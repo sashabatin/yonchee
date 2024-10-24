@@ -4,6 +4,11 @@ import requests
 import azure.cognitiveservices.speech as speechsdk
 import tempfile
 import os
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Create the Flask app
 app = Flask(__name__)
@@ -17,14 +22,17 @@ def index():
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     if 'image' not in request.files:
+        logger.error('No image part in the request')
         return jsonify({'error': 'No image part'}), 400
     file = request.files['image']
     if file.filename == '':
+        logger.error('No selected file')
         return jsonify({'error': 'No selected file'}), 400
     try:
         text_output = process_image(file)
         return jsonify({'text': text_output})
     except Exception as e:
+        logger.error(f'Error processing image: {str(e)}')
         return jsonify({'error': str(e)}), 500
 
 # Process image to extract text through the OCR API
@@ -40,14 +48,16 @@ def process_image(file):
         response = requests.post(api_endpoint, headers=headers, params=params, data=file.read())
         response.raise_for_status()
     except requests.HTTPError as e:
-        app.logger.error(f"HTTP Error: {response.status_code} - {response.reason}")
+        logger.error(f"HTTP Error: {response.status_code} - {response.reason}")
         raise Exception(f"OCR API connection failed: HTTP Error: {response.status_code} - {response.reason}")
     except requests.RequestException as e:
+        logger.error(f"Request failed: {str(e)}")
         raise Exception(f"Request failed: {str(e)}")
 
     analysis = response.json()
     if "error" in analysis:
         error_message = analysis['error']['message']
+        logger.error(f"OCR API Error: {error_message}")
         raise Exception(f"OCR API Error: {error_message}")
 
     text_output = ' '.join([' '.join([word['text'] for word in line['words']]) for region in analysis.get('regions', []) for line in region['lines']])
@@ -63,6 +73,10 @@ def synthesize_speech():
     if text:
         speech_key = os.environ.get('AZURE_SPEECH_KEY')
         service_region = os.environ.get('AZURE_SERVICE_REGION')
+        if not speech_key or not service_region:
+            logger.error("AZURE_SPEECH_KEY or AZURE_SERVICE_REGION is not set")
+            return jsonify({'error': "AZURE_SPEECH_KEY or AZURE_SERVICE_REGION is not set"}), 500
+
         speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
 
         # Set the voice based on the chosen language
@@ -84,10 +98,13 @@ def synthesize_speech():
             return send_file(filename, as_attachment=True, mimetype='audio/mpeg')
         elif result.reason == speechsdk.ResultReason.Canceled:
             cancellation_details = result.cancellation_details
+            logger.error(f"Speech synthesis canceled: {cancellation_details.reason}")
             return jsonify({'error': f"Speech synthesis canceled: {cancellation_details.reason}"}), 500
 
+        logger.error('Text-to-speech synthesis failed.')
         return jsonify({'error': 'Text-to-speech synthesis failed.'}), 500
 
+    logger.error('No text provided')
     return jsonify({'error': 'No text provided'}), 400
 
 # Run the application using Waitress if executed directly
