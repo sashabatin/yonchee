@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Yonchee Text-to-Speech Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
 
@@ -125,17 +126,35 @@
             text-align: center;
             cursor: pointer;
             flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
+            max-width: 300px; /* Ensures buttons do not exceed a certain width */
         }
 
         .audio-controls button {
-            flex-basis: calc(33.33% - 10px); /* Ensures the button width is third of the parent */
+            flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
+            max-width: 200px; /* Ensures buttons do not exceed a certain width */
+        }
+
+        .play-pause-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px; /* Ensures the button width matches the player width */
+            margin-bottom: 20px;
+        }
+
+        .play-pause-container button {
+            width: 100%;
+            font-size: 24px;
+            padding: 20px 30px;
+            border-radius: 12px; /* Rounded corners */
         }
 
         .button-group label:hover,
         .button-group button:hover,
         .audio-controls button:hover,
         .additional-controls button:hover,
-        .additional-controls a:hover {
+        .additional-controls a:hover,
+        .play-pause-container button:hover {
             background-color: #d83670;
             transform: scale(1.05);
         }
@@ -239,7 +258,19 @@
             .additional-controls a {
                 flex-basis: 100%;
                 margin-bottom: 10px;
+                max-width: none; /* Allow full width on small screens */
             }
+
+            .play-pause-container button {
+                font-size: 20px;
+                padding: 15px 20px;
+            }
+        }
+
+        /* Custom colors for specific buttons */
+        .button-group label,
+        .audio-controls button {
+            background-color: #000;
         }
     </style>
 </head>
@@ -253,13 +284,15 @@
             <form id="uploadForm">
                 <div class="button-group">
                     <label for="fileInput">Select File</label>
-                    <input type="file" id="fileInput" name="image" accept="image/*" capture="camera" required>
+                    <input type="file" id="fileInput" name="image" accept="image/*" required>
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
                 <div class="audio-controls">
-                    <button id="togglePlayPauseButton">Play</button>
                     <button id="rewindButton">Rewind</button>
                     <button id="forwardButton">Forward</button>
+                </div>
+                <div class="play-pause-container">
+                    <button id="togglePlayPauseButton">Play</button>
                 </div>
                 <audio id="audioPlayer" controls></audio>
                 <div class="additional-controls">
@@ -298,8 +331,8 @@
                 makeMagic: 'Make Magic',
                 play: 'Play',
                 pause: 'Pause',
-                rewind: '<< Rewind ',
-                forward: ' Forward >>',
+                rewind: 'Rewind',
+                forward: 'Forward',
                 download: 'Download',
                 speed: 'Speed: 1x'
             },
@@ -308,8 +341,8 @@
                 makeMagic: 'Створити магію',
                 play: 'Відтворити',
                 pause: 'Пауза',
-                rewind: '<< Перемотати назад',
-                forward: '>> Перемотати вперед',
+                rewind: 'Перемотати назад',
+                forward: 'Перемотати вперед',
                 download: 'Завантажити',
                 speed: 'Швидкість: 1x'
             },
@@ -318,8 +351,8 @@
                 makeMagic: 'Создать магию',
                 play: 'Старт',
                 pause: 'Пауза',
-                rewind: '<< Перемотать назад',
-                forward: '>> Перемотать вперед',
+                rewind: 'Перемотать назад',
+                forward: 'Перемотать вперед',
                 download: 'Скачать',
                 speed: 'Скорость: 1x'
             }
@@ -406,12 +439,6 @@
                 downloadButton.href = url;
                 downloadButton.setAttribute('download', audioFileName);
 
-                togglePlayPauseButton.hidden = false;
-                rewindButton.hidden = false;
-                forwardButton.hidden = false;
-                downloadButton.hidden = false;
-                playbackSpeedButton.hidden = false;
-
                 // Automatically play the audio
                 audioPlayer.play();
                 togglePlayPauseButton.innerText = translations[languageSelect.value].pause;
@@ -486,7 +513,6 @@
             togglePlayPauseButton.innerText = translations[languageSelect.value]?.play || 'Play';
             downloadButton.hidden = true;
             playbackSpeedButton.hidden = true;
-            togglePlayPauseButton.hidden = true;
             rewindButton.hidden = true;
             forwardButton.hidden = true;
         }
