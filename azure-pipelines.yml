@@ -20,22 +20,18 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-
-      - script: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-        displayName: 'Create virtual environment and install dependencies'
+        displayName: 'Use Python 3.10'
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - task: ArchiveFiles@2
-        inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-          includeRootFolder: false
-          archiveType: 'zip'
-          archiveFile: '$(Build.ArtifactStagingDirectory)/release.zip'
-          replaceExistingArchive: true
+      - script: |
+          zip -r $(Build.ArtifactStagingDirectory)/release.zip . -x \
+            ".git/*" \
+            ".github/*" \
+            ".gitignore" \
+            "azure-pipelines.yml" \
+            "README.md"
+        displayName: 'Create archive with included files'
 
       - publish: $(Build.ArtifactStagingDirectory)/release.zip
         displayName: 'Publish Artifact'
@@ -53,18 +49,38 @@ stages:
     steps:
       - download: current
         artifact: python-app
+        displayName: 'Download Yonchee artifact'
 
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.10'
           addToPath: true
+        displayName: 'Use Python 3.10'
 
-      - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
+      - script: |
+          echo "Checking the contents of the directory before unzipping..."
+          ls -l $(Pipeline.Workspace)/python-app/
+          echo "Unzipping the artifact..."
+          unzip -o -d $(Pipeline.Workspace)/python-app $(Pipeline.Workspace)/python-app/release.zip
+          echo "Contents after unzip:"
+          ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
+      - script: |
+          echo "Checking the presence of requirements.txt"
+          if [ -f $(Pipeline.Workspace)/python-app/requirements.txt ]; then
+            echo "requirements.txt found, installing dependencies..."
+            pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          else
+            echo "requirements.txt not found"
+            exit 1
+          fi
+        displayName: 'Install dependencies in target environment'
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Double-check directory context
+
       - task: AzureCLI@2
-        displayName: Delete WEBSITE_RUN_FROM_PACKAGE
+        displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -76,7 +92,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: Configurating variables
+        displayName: 'Configure variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -88,7 +104,7 @@ stages:
               --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)
 
       - task: AzureWebApp@1
-        displayName: Deploy Yonchee Staging app
+        displayName: 'Deploy Yonchee Staging app'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee-staging'
@@ -104,18 +120,38 @@ stages:
     steps:
       - download: current
         artifact: python-app
+        displayName: 'Download Yonchee artifact'
 
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.10'
           addToPath: true
-          
-      - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
+        displayName: 'Use Python 3.10'
+
+      - script: |
+          echo "Checking the contents of the directory before unzipping..."
+          ls -l $(Pipeline.Workspace)/python-app/
+          echo "Unzipping the artifact..."
+          unzip -o -d $(Pipeline.Workspace)/python-app $(Pipeline.Workspace)/python-app/release.zip
+          echo "Contents after unzip:"
+          ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
+      - script: |
+          echo "Checking the presence of requirements.txt"
+          if [ -f $(Pipeline.Workspace)/python-app/requirements.txt ]; then
+            echo "requirements.txt found, installing dependencies..."
+            pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          else
+            echo "requirements.txt not found"
+            exit 1
+          fi
+        displayName: 'Install dependencies in target environment'
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Double-check directory context
+
       - task: AzureCLI@2
-        displayName: Delete WEBSITE_RUN_FROM_PACKAGE
+        displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -127,7 +163,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: Configurating variables
+        displayName: 'Configure variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -139,7 +175,7 @@ stages:
               --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)
 
       - task: AzureWebApp@1
-        displayName: Deploy Yonchee Production app
+        displayName: 'Deploy Yonchee Production app'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee'
