@@ -20,7 +20,7 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-        displayName: 'UsePythonVersion 3.10'
+        displayName: 'Use Python 3.10'
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
@@ -55,7 +55,7 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-        displayName: 'UsePythonVersion 3.10'
+        displayName: 'Use Python 3.10'
 
       - script: |
           echo "Unzipping the artifact..."
@@ -117,7 +117,7 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-        displayName: 'UsePythonVersion 3.10'
+        displayName: 'Use Python 3.10'
 
       - script: |
           echo "Unzipping the artifact..."
