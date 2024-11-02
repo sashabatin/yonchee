@@ -20,6 +20,7 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
+        displayName: 'UsePythonVersion 3.10'
 
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
@@ -35,6 +36,7 @@ stages:
       - publish: $(Build.ArtifactStagingDirectory)/release.zip
         displayName: 'Publish Artifact'
         artifact: python-app
+        
 
 - stage: Deploy
   displayName: 'Deploy Stage'
@@ -48,11 +50,13 @@ stages:
     steps:
       - download: current
         artifact: python-app
+        displayName: 'Download Yonchee artifact'
 
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.10'
           addToPath: true
+        displayName: 'UsePythonVersion 3.10'
 
       - script: unzip $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
@@ -64,7 +68,7 @@ stages:
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
-        displayName: Delete WEBSITE_RUN_FROM_PACKAGE
+        displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -76,7 +80,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: Configurating variables
+        displayName: 'Configurating variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -88,7 +92,7 @@ stages:
               --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)
 
       - task: AzureWebApp@1
-        displayName: Deploy Yonchee Staging app
+        displayName: 'Deploy Yonchee Staging app'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee-staging'
@@ -104,11 +108,13 @@ stages:
     steps:
       - download: current
         artifact: python-app
+        displayName: 'Download Yonchee artifact'
 
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.10'
           addToPath: true
+        displayName: 'UsePuthonVersion 3.10'
 
       - script: unzip $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
@@ -120,7 +126,7 @@ stages:
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
-        displayName: Delete WEBSITE_RUN_FROM_PACKAGE
+        displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -132,7 +138,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: Configurating variables
+        displayName: 'Configurating variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -144,7 +150,7 @@ stages:
               --settings OCR_API_KEY=$(OCR_API_KEY) AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION)
 
       - task: AzureWebApp@1
-        displayName: Deploy Yonchee Production app
+        displayName: 'Deploy Yonchee Production app'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee'
