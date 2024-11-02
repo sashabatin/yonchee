@@ -58,6 +58,8 @@ stages:
         displayName: 'Use Python 3.10'
 
       - script: |
+          echo "Checking the contents of the directory before unzipping..."
+          ls -l $(Pipeline.Workspace)/python-app/
           echo "Unzipping the artifact..."
           unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
           echo "Contents after unzip:"
@@ -66,10 +68,16 @@ stages:
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
-          echo "Installing dependencies in target environment..."
-          pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          echo "Checking the presence of requirements.txt"
+          if [ -f $(Pipeline.Workspace)/python-app/requirements.txt ]; then
+            echo "requirements.txt found, installing dependencies..."
+            pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          else
+            echo "requirements.txt not found"
+            exit 1
+          fi
         displayName: 'Install dependencies in target environment'
-        workingDirectory: $(Pipeline.Workspace)/python-app  # Ensure correct directory context
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Double-check directory context
 
       - task: AzureCLI@2
         displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
@@ -121,6 +129,8 @@ stages:
         displayName: 'Use Python 3.10'
 
       - script: |
+          echo "Checking the contents of the directory before unzipping..."
+          ls -l $(Pipeline.Workspace)/python-app/
           echo "Unzipping the artifact..."
           unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
           echo "Contents after unzip:"
@@ -129,10 +139,16 @@ stages:
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
-          echo "Installing dependencies in target environment..."
-          pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          echo "Checking the presence of requirements.txt"
+          if [ -f $(Pipeline.Workspace)/python-app/requirements.txt ]; then
+            echo "requirements.txt found, installing dependencies..."
+            pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
+          else
+            echo "requirements.txt not found"
+            exit 1
+          fi
         displayName: 'Install dependencies in target environment'
-        workingDirectory: $(Pipeline.Workspace)/python-app  # Ensure correct directory context
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Double-check directory context
 
       - task: AzureCLI@2
         displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
