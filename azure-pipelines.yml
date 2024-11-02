@@ -59,15 +59,15 @@ stages:
 
       - script: |
           echo "Unzipping the artifact..."
-          unzip -qo $(Pipeline.Workspace)/_current/python-app/release.zip -d $(Pipeline.Workspace)/_current/python-app/
+          unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
           echo "Contents after unzip:"
-          ls -l $(Pipeline.Workspace)/_current/python-app/
+          ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
           echo "Installing dependencies in target environment..."
-          pip install -r $(Pipeline.Workspace)/_current/python-app/requirements.txt
+          pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
@@ -99,7 +99,7 @@ stages:
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee-staging'
-          package: '$(Pipeline.Workspace)/_current/python-app/release.zip'
+          package: '$(Pipeline.Workspace)/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
 
@@ -121,15 +121,15 @@ stages:
 
       - script: |
           echo "Unzipping the artifact..."
-          unzip -qo $(Pipeline.Workspace)/_current/python-app/release.zip -d $(Pipeline.Workspace)/_current/python-app/
+          unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
           echo "Contents after unzip:"
-          ls -l $(Pipeline.Workspace)/_current/python-app/
+          ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
           echo "Installing dependencies in target environment..."
-          pip install -r $(Pipeline.Workspace)/_current/python-app/requirements.txt
+          pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
@@ -161,6 +161,6 @@ stages:
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee'
-          package: '$(Pipeline.Workspace)/_current/python-app/release.zip'
+          package: '$(Pipeline.Workspace)/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
