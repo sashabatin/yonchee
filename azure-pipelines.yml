@@ -36,7 +36,6 @@ stages:
       - publish: $(Build.ArtifactStagingDirectory)/release.zip
         displayName: 'Publish Artifact'
         artifact: python-app
-        
 
 - stage: Deploy
   displayName: 'Deploy Stage'
@@ -58,13 +57,17 @@ stages:
           addToPath: true
         displayName: 'UsePythonVersion 3.10'
 
-      - script: unzip $(Pipeline.Workspace)/python-app/release.zip
+      - script: |
+          echo "Unzipping the artifact..."
+          unzip -qo $(Pipeline.Workspace)/_current/python-app/release.zip -d $(Pipeline.Workspace)/_current/python-app/
+          echo "Contents after unzip:"
+          ls -l $(Pipeline.Workspace)/_current/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
           echo "Installing dependencies in target environment..."
-          pip install -r requirements.txt
+          pip install -r $(Pipeline.Workspace)/_current/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
@@ -96,7 +99,7 @@ stages:
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee-staging'
-          package: '$(Pipeline.Workspace)/python-app/release.zip'
+          package: '$(Pipeline.Workspace)/_current/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
 
@@ -114,15 +117,19 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-        displayName: 'UsePuthonVersion 3.10'
+        displayName: 'UsePythonVersion 3.10'
 
-      - script: unzip $(Pipeline.Workspace)/python-app/release.zip
+      - script: |
+          echo "Unzipping the artifact..."
+          unzip -qo $(Pipeline.Workspace)/_current/python-app/release.zip -d $(Pipeline.Workspace)/_current/python-app/
+          echo "Contents after unzip:"
+          ls -l $(Pipeline.Workspace)/_current/python-app/
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
 
       - script: |
           echo "Installing dependencies in target environment..."
-          pip install -r requirements.txt
+          pip install -r $(Pipeline.Workspace)/_current/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
@@ -154,6 +161,6 @@ stages:
         inputs:
           azureSubscription: 'yonchee-service-connection'
           appName: 'yonchee'
-          package: '$(Pipeline.Workspace)/python-app/release.zip'
+          package: '$(Pipeline.Workspace)/_current/python-app/release.zip'
           startupCommand: 'waitress-serve --port=8000 app:app'
           appType: 'webAppLinux'
