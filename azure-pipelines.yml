@@ -21,21 +21,16 @@ stages:
           versionSpec: '3.10'
           addToPath: true
 
-      - script: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install -r requirements.txt
-        displayName: 'Create virtual environment and install dependencies'
-
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
 
-      - task: ArchiveFiles@2
-        inputs:
-          rootFolderOrFile: '$(System.DefaultWorkingDirectory)'
-          includeRootFolder: false
-          archiveType: 'zip'
-          archiveFile: '$(Build.ArtifactStagingDirectory)/release.zip'
-          replaceExistingArchive: true
+      - script: |
+          zip -r $(Build.ArtifactStagingDirectory)/release.zip . -x \
+            ".git/*" \
+            ".github/*" \
+            ".gitignore" \
+            "azure-pipelines.yml" \
+            "README.md"
+        displayName: 'Create archive with included files'
 
       - publish: $(Build.ArtifactStagingDirectory)/release.zip
         displayName: 'Publish Artifact'
@@ -59,9 +54,14 @@ stages:
           versionSpec: '3.10'
           addToPath: true
 
-      - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
+      - script: unzip $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
+
+      - script: |
+          echo "Installing dependencies in target environment..."
+          pip install -r requirements.txt
+        displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
         displayName: Delete WEBSITE_RUN_FROM_PACKAGE
@@ -109,10 +109,15 @@ stages:
         inputs:
           versionSpec: '3.10'
           addToPath: true
-          
-      - script: unzip -v $(Pipeline.Workspace)/python-app/release.zip
+
+      - script: unzip $(Pipeline.Workspace)/python-app/release.zip
         displayName: 'Unzip artifact for deployment'
         timeoutInMinutes: 10  # Increase the timeout if necessary
+
+      - script: |
+          echo "Installing dependencies in target environment..."
+          pip install -r requirements.txt
+        displayName: 'Install dependencies in target environment'
 
       - task: AzureCLI@2
         displayName: Delete WEBSITE_RUN_FROM_PACKAGE

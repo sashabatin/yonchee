@@ -1,6 +1,0 @@
-set OCR_API_KEY='38fda8ef3d6243b8bb7739e9a20f0d07'
-set AZURE_SPEECH_KEY='486058dc40e84deea1bf8d48e972505e'
-set AZURE_SERVICE_REGION='eastus'
-
-#activate venv
-. ./venv/Scripts/activate
