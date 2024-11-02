@@ -69,6 +69,7 @@ stages:
           echo "Installing dependencies in target environment..."
           pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Ensure correct directory context
 
       - task: AzureCLI@2
         displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
@@ -131,6 +132,7 @@ stages:
           echo "Installing dependencies in target environment..."
           pip install -r $(Pipeline.Workspace)/python-app/requirements.txt
         displayName: 'Install dependencies in target environment'
+        workingDirectory: $(Pipeline.Workspace)/python-app  # Ensure correct directory context
 
       - task: AzureCLI@2
         displayName: 'Delete WEBSITE_RUN_FROM_PACKAGE'
