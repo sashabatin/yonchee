@@ -61,7 +61,7 @@ stages:
           echo "Checking the contents of the directory before unzipping..."
           ls -l $(Pipeline.Workspace)/python-app/
           echo "Unzipping the artifact..."
-          unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
+          unzip -o -d $(Pipeline.Workspace)/python-app $(Pipeline.Workspace)/python-app/release.zip
           echo "Contents after unzip:"
           ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
@@ -92,7 +92,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: 'Configurating variables'
+        displayName: 'Configure variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
@@ -132,7 +132,7 @@ stages:
           echo "Checking the contents of the directory before unzipping..."
           ls -l $(Pipeline.Workspace)/python-app/
           echo "Unzipping the artifact..."
-          unzip -v $(Pipeline.Workspace)/python-app/release.zip -d $(Pipeline.Workspace)/python-app/
+          unzip -o -d $(Pipeline.Workspace)/python-app $(Pipeline.Workspace)/python-app/release.zip
           echo "Contents after unzip:"
           ls -l $(Pipeline.Workspace)/python-app/
         displayName: 'Unzip artifact for deployment'
@@ -163,7 +163,7 @@ stages:
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
       - task: AzureCLI@2
-        displayName: 'Configurating variables'
+        displayName: 'Configure variables'
         inputs:
           azureSubscription: 'yonchee-service-connection'
           scriptType: 'bash'
