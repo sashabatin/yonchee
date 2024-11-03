@@ -9,7 +9,6 @@ const forwardButton = document.getElementById('forwardButton');
 const playbackSpeedButton = document.getElementById('playbackSpeedButton');
 const fileLabel = document.querySelector('label[for="fileInput"]');
 const languageSelect = document.getElementById('languageSelect');
-const voiceTypeSelect = document.getElementById('voiceTypeSelect');
 const liveRegion = document.getElementById('liveRegion');
 
 const translations = {
@@ -42,6 +41,16 @@ const translations = {
         forward: 'Перемотать вперед',
         download: 'Скачать',
         speed: 'Скорость: 1x'
+    },
+    es: {
+        selectFile: 'Seleccionar archivo',
+        makeMagic: 'Hacer magia',
+        play: 'Reproducir',
+        pause: 'Pausa',
+        rewind: 'Rebobinar',
+        forward: 'Adelantar',
+        download: 'Descargar',
+        speed: 'Velocidad: 1x'
     }
 };
 
@@ -107,8 +116,7 @@ form.addEventListener('submit', function(event) {
                 },
                 body: JSON.stringify({
                     text: data.text,
-                    language: languageSelect.value,
-                    voiceType: voiceTypeSelect.value
+                    language: languageSelect.value
                 })
             });
         }

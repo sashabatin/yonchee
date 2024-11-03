@@ -33,7 +33,7 @@ def upload_image():
         return jsonify({'text': text_output})
     except Exception as e:
         logger.error(f'Error processing image: {str(e)}')
-        return jsonify({'error': str(e)}'), 500
+        return jsonify({'error': str(e)}), 500
 
 # Process image to extract text through the OCR API
 def process_image(file):
@@ -69,7 +69,6 @@ def synthesize_speech():
     data = request.get_json()
     text = data.get('text')
     language = data.get('language', 'en')
-    voice_type = data.get('voiceType', 'female')
 
     if text:
         speech_key = os.environ.get('AZURE_SPEECH_KEY')
@@ -80,15 +79,15 @@ def synthesize_speech():
 
         speech_config = speechsdk.SpeechConfig(subscription=speech_key, region=service_region)
 
-        # Set the voice based on the chosen language and voice type
+        # Set the voice based on the chosen language
         if language == 'uk':
-            speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural" if voice_type == 'male' else "uk-UA-PolinaNeural"
+            speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
         elif language == 'ru':
-            speech_config.speech_synthesis_voice_name = "ru-RU-DmitryNeural" if voice_type == 'male' else "ru-RU-SvetlanaNeural"
+            speech_config.speech_synthesis_voice_name = "ru-RU-DmitryNeural"
         elif language == 'es':
-            speech_config.speech_synthesis_voice_name = "es-ES-AlvaroNeural" if voice_type == 'male' else "es-ES-ElviraNeural"
+            speech_config.speech_synthesis_voice_name = "es-ES-AlvaroNeural"
         else:  # Default to English
-            speech_config.speech_synthesis_voice_name = "en-US-GuyNeural" if voice_type == 'male' else "en-US-JennyNeural"
+            speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"
 
         synthesizer = speechsdk.SpeechSynthesizer(speech_config=speech_config, audio_config=None)
         result = synthesizer.speak_text_async(text).get()
