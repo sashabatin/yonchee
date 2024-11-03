@@ -32,13 +32,8 @@
                     <a id="downloadButton">Download</a>
                     <button id="playbackSpeedButton">Speed: 1x</button>
                 </div>
-                <div id="output" class="card"></div>
                 <div id="progressContainer">
                     <progress id="progressBar" value="0" max="100"></progress>
-                </div>
-                <div class="image-text-container">
-                    <img id="uploadedImage" src="" alt="Uploaded Image">
-                    <div id="textOverlay"></div>
                 </div>
             </form>
             <div id="liveRegion" aria-live="polite"></div>
@@ -50,6 +45,16 @@
         <option value="ru">Russian</option>
         <option value="es">Spanish</option>
     </select>
+
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <span class="close-button">&times;</span>
+            <div class="image-text-container">
+                <img id="uploadedImage" src="" alt="Uploaded Image">
+                <div id="textOverlay"></div>
+            </div>
+        </div>
+    </div>
 
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>

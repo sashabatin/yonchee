@@ -1,5 +1,4 @@
 const form = document.getElementById('uploadForm');
-const outputDiv = document.getElementById('output');
 const audioPlayer = document.getElementById('audioPlayer');
 const fileInput = document.getElementById('fileInput');
 const togglePlayPauseButton = document.getElementById('togglePlayPauseButton');
@@ -13,6 +12,8 @@ const liveRegion = document.getElementById('liveRegion');
 const progressBar = document.getElementById('progressBar');
 const uploadedImage = document.getElementById('uploadedImage');
 const textOverlay = document.getElementById('textOverlay');
+const popup = document.getElementById('popup');
+const closeButton = document.querySelector('.close-button');
 
 const translations = {
     en: {
@@ -89,7 +90,6 @@ fileInput.addEventListener('change', function() {
 form.addEventListener('submit', function(event) {
     event.preventDefault();
     const formData = new FormData(form);
-    outputDiv.innerHTML = ''; // Clear previous outputs
     resetAudioPlayer();
 
     let originalFileName = fileInput.files[0]?.name.split('.').slice(0, -1).join('.') || generateUUID();
@@ -107,13 +107,15 @@ form.addEventListener('submit', function(event) {
             return;
         }
         if (data.text) {
-            outputDiv.innerText = 'Extracted Text: ' + data.text;
             createTextOverlay(data.text); // Create text overlay
             // Show the uploaded image
             const imageUrl = URL.createObjectURL(fileInput.files[0]);
             uploadedImage.src = imageUrl;
             uploadedImage.style.display = 'block';
             textOverlay.style.display = 'block';
+
+            // Open the popup
+            popup.style.display = 'block';
 
             // Reset file input
             document.getElementById('fileInput').value = '';
@@ -261,3 +263,15 @@ function getWordTimeMapping() {
     // Example: return [0, 1, 2, 3, 4, 5]; // Each word starts at these seconds
     return [];
 }
+
+// Close the popup when the close button is clicked
+closeButton.addEventListener('click', () => {
+    popup.style.display = 'none';
+});
+
+// Close the popup when clicking outside of the popup content
+window.addEventListener('click', (event) => {
+    if (event.target == popup) {
+        popup.style.display = 'none';
+    }
+});
