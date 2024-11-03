@@ -9,6 +9,7 @@ const forwardButton = document.getElementById('forwardButton');
 const playbackSpeedButton = document.getElementById('playbackSpeedButton');
 const fileLabel = document.querySelector('label[for="fileInput"]');
 const languageSelect = document.getElementById('languageSelect');
+const voiceTypeSelect = document.getElementById('voiceTypeSelect');
 const liveRegion = document.getElementById('liveRegion');
 
 const translations = {
@@ -116,7 +117,8 @@ form.addEventListener('submit', function(event) {
                 },
                 body: JSON.stringify({
                     text: data.text,
-                    language: languageSelect.value
+                    language: languageSelect.value,
+                    voiceType: voiceTypeSelect.value
                 })
             });
         }
