@@ -265,6 +265,16 @@
                 font-size: 24px; /* Adjusted font size */
                 padding: 20px 30px; /* Adjusted padding */
             }
+
+            h2 {
+                font-size: 24px; /* Reduced font size */
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                display: none; /* Hide the text on smaller screens */
+            }
         }
 
         /* Custom colors for specific buttons */
@@ -506,6 +516,7 @@
                 liveRegion.textContent = 'Error during processing: ' + err.message;
             });
         });
+
 
         function resetAudioPlayer() {
             audioPlayer.src = '';
