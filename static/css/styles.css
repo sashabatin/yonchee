@@ -288,15 +288,6 @@ input[type="file"] {
     position: absolute;
     border: 2px solid red; /* Highlight color */
     pointer-events: none; /* Ensure it doesn't interfere with interactions */
-}
-
-/* Progress Bar */
-#progressContainer {
-    width: 100%;
-    margin-top: 10px;
-}
-
-#progressBar {
-    width: 100%;
-    height: 20px;
+    display: none; /* Initially hidden */
+    z-index: 10; /* Ensure it is above the image */
 }

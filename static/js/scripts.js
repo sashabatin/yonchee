@@ -9,7 +9,6 @@ const playbackSpeedButton = document.getElementById('playbackSpeedButton');
 const fileLabel = document.querySelector('label[for="fileInput"]');
 const languageSelect = document.getElementById('languageSelect');
 const liveRegion = document.getElementById('liveRegion');
-const progressBar = document.getElementById('progressBar');
 const uploadedImage = document.getElementById('uploadedImage');
 const highlightBox = document.getElementById('highlightBox');
 const popup = document.getElementById('popup');
@@ -182,9 +181,8 @@ form.addEventListener('submit', function(event) {
             liveRegion.textContent = `Playback speed changed to ${newSpeed}x`;
         };
 
-        // Update progress bar as audio plays
+        // Update the highlight box as audio plays
         audioPlayer.addEventListener('timeupdate', () => {
-            progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
             highlightCurrentText(audioPlayer.currentTime);
         });
 
