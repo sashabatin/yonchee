@@ -11,7 +11,7 @@ const languageSelect = document.getElementById('languageSelect');
 const liveRegion = document.getElementById('liveRegion');
 const progressBar = document.getElementById('progressBar');
 const uploadedImage = document.getElementById('uploadedImage');
-const textOverlay = document.getElementById('textOverlay');
+const highlightBox = document.getElementById('highlightBox');
 const popup = document.getElementById('popup');
 const closeButton = document.querySelector('.close-button');
 
@@ -107,12 +107,10 @@ form.addEventListener('submit', function(event) {
             return;
         }
         if (data.text) {
-            createTextOverlay(data.text); // Create text overlay
             // Show the uploaded image
             const imageUrl = URL.createObjectURL(fileInput.files[0]);
             uploadedImage.src = imageUrl;
             uploadedImage.style.display = 'block';
-            textOverlay.style.display = 'block';
 
             // Open the popup
             popup.style.display = 'block';
@@ -239,28 +237,31 @@ function generateUUID() {
     });
 }
 
-function createTextOverlay(text) {
-    const words = text.split(' ');
-    textOverlay.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
-}
-
 function highlightCurrentText(currentTime) {
-    const words = document.querySelectorAll('#textOverlay span');
     // Assuming we have a function getWordTimeMapping() that returns an array of times for each word
     const wordTimes = getWordTimeMapping(); // This function needs to be implemented based on your audio synthesis
 
-    words.forEach((word, index) => {
-        if (currentTime >= wordTimes[index] && currentTime < wordTimes[index + 1]) {
-            word.classList.add('highlight');
-        } else {
-            word.classList.remove('highlight');
-        }
+    // Example: let's assume wordTimes is an array of objects with word and bounding box coordinates
+    // [{time: 0, x: 10, y: 20, width: 100, height: 20}, ...]
+
+    const currentWord = wordTimes.find((word, index) => {
+        return currentTime >= word.time && (index === wordTimes.length - 1 || currentTime < wordTimes[index + 1].time);
     });
+
+    if (currentWord) {
+        highlightBox.style.left = `${currentWord.x}px`;
+        highlightBox.style.top = `${currentWord.y}px`;
+        highlightBox.style.width = `${currentWord.width}px`;
+        highlightBox.style.height = `${currentWord.height}px`;
+        highlightBox.style.display = 'block';
+    } else {
+        highlightBox.style.display = 'none';
+    }
 }
 
 function getWordTimeMapping() {
-    // Placeholder function - implement your logic to map word times
-    // Example: return [0, 1, 2, 3, 4, 5]; // Each word starts at these seconds
+    // Placeholder function - implement your logic to map word times and bounding boxes
+    // Example: return [{time: 0, x: 10, y: 20, width: 100, height: 20}, ...];
     return [];
 }
 

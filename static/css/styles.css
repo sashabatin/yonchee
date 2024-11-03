@@ -284,14 +284,10 @@ input[type="file"] {
     height: auto;
 }
 
-#textOverlay {
+#highlightBox {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    color: red; /* Highlight color */
-    font-size: 20px;
-    background: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
+    border: 2px solid red; /* Highlight color */
+    pointer-events: none; /* Ensure it doesn't interfere with interactions */
 }
 
 /* Progress Bar */
