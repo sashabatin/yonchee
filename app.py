@@ -84,6 +84,8 @@ def synthesize_speech():
             speech_config.speech_synthesis_voice_name = "uk-UA-OstapNeural"
         elif language == 'ru':
             speech_config.speech_synthesis_voice_name = "ru-RU-DmitryNeural"
+        elif language == 'es':
+            speech_config.speech_synthesis_voice_name = "es-ES-AlvaroNeural"
         else:  # Default to English
             speech_config.speech_synthesis_voice_name = "en-US-JennyNeural"
 
