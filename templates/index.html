@@ -115,8 +115,8 @@
         .additional-controls a {
             background-color: #ff4081;
             color: #FFF;
-            font-size: 20px;
-            padding: 15px 30px;
+            font-size: 24px; /* Increased font size */
+            padding: 20px 40px; /* Increased padding */
             border: 2px solid #FFF;
             border-radius: 12px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -126,12 +126,12 @@
             text-align: center;
             cursor: pointer;
             flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
-            max-width: 300px; /* Ensures buttons do not exceed a certain width */
+            max-width: 350px; /* Ensures buttons do not exceed a certain width */
         }
 
         .audio-controls button {
             flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
-            max-width: 200px; /* Ensures buttons do not exceed a certain width */
+            max-width: 250px; /* Ensures buttons do not exceed a certain width */
         }
 
         .play-pause-container {
@@ -144,8 +144,8 @@
 
         .play-pause-container button {
             width: 100%;
-            font-size: 24px;
-            padding: 20px 30px;
+            font-size: 28px; /* Increased font size */
+            padding: 25px 40px; /* Increased padding */
             border-radius: 12px; /* Rounded corners */
         }
 
@@ -262,8 +262,8 @@
             }
 
             .play-pause-container button {
-                font-size: 20px;
-                padding: 15px 20px;
+                font-size: 24px; /* Adjusted font size */
+                padding: 20px 30px; /* Adjusted padding */
             }
         }
 
@@ -284,7 +284,7 @@
             <form id="uploadForm">
                 <div class="button-group">
                     <label for="fileInput">Select File</label>
-                    <input type="file" id="fileInput" name="image" accept="image/*" required>
+                    <input type="file" id="fileInput" name="image" accept="image/*" capture="environment" required>
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
                 <div class="audio-controls">
