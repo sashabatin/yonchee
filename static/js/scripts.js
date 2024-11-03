@@ -10,6 +10,9 @@ const playbackSpeedButton = document.getElementById('playbackSpeedButton');
 const fileLabel = document.querySelector('label[for="fileInput"]');
 const languageSelect = document.getElementById('languageSelect');
 const liveRegion = document.getElementById('liveRegion');
+const progressBar = document.getElementById('progressBar');
+const uploadedImage = document.getElementById('uploadedImage');
+const textOverlay = document.getElementById('textOverlay');
 
 const translations = {
     en: {
@@ -105,6 +108,13 @@ form.addEventListener('submit', function(event) {
         }
         if (data.text) {
             outputDiv.innerText = 'Extracted Text: ' + data.text;
+            createTextOverlay(data.text); // Create text overlay
+            // Show the uploaded image
+            const imageUrl = URL.createObjectURL(fileInput.files[0]);
+            uploadedImage.src = imageUrl;
+            uploadedImage.style.display = 'block';
+            textOverlay.style.display = 'block';
+
             // Reset file input
             document.getElementById('fileInput').value = '';
             fileLabel.textContent = translations[languageSelect.value]?.selectFile || 'Select File';
@@ -172,6 +182,12 @@ form.addEventListener('submit', function(event) {
             liveRegion.textContent = `Playback speed changed to ${newSpeed}x`;
         };
 
+        // Update progress bar as audio plays
+        audioPlayer.addEventListener('timeupdate', () => {
+            progressBar.value = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            highlightCurrentText(audioPlayer.currentTime);
+        });
+
         // Keyboard navigation for audio controls
         document.onkeydown = (e) => {
             if (e.key === 'ArrowLeft') {
@@ -219,4 +235,29 @@ function generateUUID() {
             v = c === 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
+}
+
+function createTextOverlay(text) {
+    const words = text.split(' ');
+    textOverlay.innerHTML = words.map(word => `<span>${word}</span>`).join(' ');
+}
+
+function highlightCurrentText(currentTime) {
+    const words = document.querySelectorAll('#textOverlay span');
+    // Assuming we have a function getWordTimeMapping() that returns an array of times for each word
+    const wordTimes = getWordTimeMapping(); // This function needs to be implemented based on your audio synthesis
+
+    words.forEach((word, index) => {
+        if (currentTime >= wordTimes[index] && currentTime < wordTimes[index + 1]) {
+            word.classList.add('highlight');
+        } else {
+            word.classList.remove('highlight');
+        }
+    });
+}
+
+function getWordTimeMapping() {
+    // Placeholder function - implement your logic to map word times
+    // Example: return [0, 1, 2, 3, 4, 5]; // Each word starts at these seconds
+    return [];
 }
