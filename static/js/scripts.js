@@ -42,16 +42,6 @@ const translations = {
         forward: 'Перемотать вперед',
         download: 'Скачать',
         speed: 'Скорость: 1x'
-    },
-    es: {
-        selectFile: 'Seleccionar archivo',
-        makeMagic: 'Hacer magia',
-        play: 'Reproducir',
-        pause: 'Pausa',
-        rewind: 'Rebobinar',
-        forward: 'Adelantar',
-        download: 'Descargar',
-        speed: 'Velocidad: 1x'
     }
 };
 
