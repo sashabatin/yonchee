@@ -82,6 +82,9 @@ setUpLanguage('en'); // Default to English, can be set dynamically as needed
 
 fileInput.addEventListener('change', function() {
     fileLabel.textContent = fileInput.files[0].name;
+    const imageUrl = URL.createObjectURL(fileInput.files[0]);
+    uploadedImage.src = imageUrl;
+    uploadedImage.style.display = 'block';
 });
 
 form.addEventListener('submit', function(event) {
@@ -104,14 +107,6 @@ form.addEventListener('submit', function(event) {
             return;
         }
         if (data.text) {
-            // Show the uploaded image
-            const imageUrl = URL.createObjectURL(fileInput.files[0]);
-            uploadedImage.src = imageUrl;
-            uploadedImage.style.display = 'block';
-
-            // Reset file input
-            document.getElementById('fileInput').value = '';
-            fileLabel.textContent = translations[languageSelect.value]?.selectFile || 'Select File';
             // Generating speech from extracted text
             return fetch('/synthesize-speech', {
                 method: 'POST',
@@ -221,7 +216,7 @@ function resetAudioPlayer() {
     playbackSpeedButton.hidden = true;
     rewindButton.hidden = true;
     forwardButton.hidden = true;
-    togglePlayPauseButton.style.backgroundSize = '0% 100%'; // Reset progress bar
+    togglePlayPauseButton.style.background = 'linear-gradient(to right, blue 0%, blue 0%, red 0%, red 100%)'; // Reset progress bar
 }
 
 function generateUUID() {
@@ -262,5 +257,5 @@ function getWordTimeMapping() {
 
 function updateProgressBar(currentTime, duration) {
     const progressPercentage = (currentTime / duration) * 100;
-    togglePlayPauseButton.style.backgroundSize = `${progressPercentage}% 100%`;
+    togglePlayPauseButton.style.background = `linear-gradient(to right, blue ${progressPercentage}%, red ${progressPercentage}%)`;
 }

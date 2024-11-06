@@ -19,6 +19,9 @@
     <main>
         <div class="center-content">
             <h2>Text to Speech Service</h2>
+            <div id="imageContainer">
+                <img id="uploadedImage" src="" alt="Uploaded Image" style="display:none;">
+            </div>
         </div>
         <div class="left-buttons">
             <form id="uploadForm">
@@ -40,10 +43,7 @@
             <div id="liveRegion" aria-live="polite"></div>
         </div>
         <div class="content" id="content">
-            <div id="imageContainer">
-                <img id="uploadedImage" src="" alt="Uploaded Image">
-                <div id="highlightBox"></div>
-            </div>
+            <div id="highlightBox"></div>
         </div>
     </main>
     <audio id="audioPlayer" style="display: none;"></audio>

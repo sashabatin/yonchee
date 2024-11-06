@@ -112,7 +112,7 @@ input[type="file"] {
 .audio-controls button,
 .additional-controls button,
 .additional-controls a {
-    background-color: #ff4081;
+    background-color: #007BFF; /* Blue color */
     color: #FFF;
     font-size: 24px; /* Increased font size */
     padding: 20px 40px; /* Increased padding */
@@ -134,14 +134,14 @@ input[type="file"] {
 .audio-controls button:hover,
 .additional-controls button:hover,
 .additional-controls a:hover {
-    background-color: #d83670;
+    background-color: #0056b3;
     transform: scale(1.05);
 }
 
 /* Gradient and animation for Play/Pause and Make Magic buttons */
 #togglePlayPauseButton,
 #makeMagicButton {
-    background: linear-gradient(to right, #007BFF, #FFEB3B);
+    background: red; /* Red color by default */
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -172,7 +172,8 @@ input[type="file"] {
 
 /* Progress bar inside the play/pause button */
 #togglePlayPauseButton {
-    background: linear-gradient(to right, #007BFF, #FFEB3B);
+    background: red; /* Red color by default */
+    background-image: linear-gradient(to right, blue, blue);
     background-size: 0% 100%; /* Initial size */
     background-repeat: no-repeat;
     transition: background-size 0.2s linear; /* Smooth transition for progress bar */
@@ -181,11 +182,13 @@ input[type="file"] {
 #imageContainer {
     position: relative;
     max-width: 100%;
+    margin-top: 20px; /* Add some margin for spacing */
 }
 
 #uploadedImage {
     width: 100%;
     height: auto;
+    display: none; /* Initially hidden */
 }
 
 #highlightBox {
