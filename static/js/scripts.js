@@ -11,8 +11,6 @@ const languageSelect = document.getElementById('languageSelect');
 const liveRegion = document.getElementById('liveRegion');
 const uploadedImage = document.getElementById('uploadedImage');
 const highlightBox = document.getElementById('highlightBox');
-const sidebar = document.getElementById('sidebar');
-const content = document.getElementById('content');
 
 const translations = {
     en: {
@@ -30,8 +28,8 @@ const translations = {
         makeMagic: 'Створити магію',
         play: 'Відтворити',
         pause: 'Пауза',
-        rewind: 'Перемотати назад',
-        forward: 'Перемотати вперед',
+        rewind: 'Назад',
+        forward: 'Вперед',
         download: 'Завантажити',
         speed: 'Швидкість: 1x'
     },
@@ -40,8 +38,8 @@ const translations = {
         makeMagic: 'Создать магию',
         play: 'Старт',
         pause: 'Пауза',
-        rewind: 'Перемотать назад',
-        forward: 'Перемотать вперед',
+        rewind: 'Назад',
+        forward: 'Вперед',
         download: 'Скачать',
         speed: 'Скорость: 1x'
     },
@@ -181,6 +179,7 @@ form.addEventListener('submit', function(event) {
         // Update the highlight box as audio plays
         audioPlayer.addEventListener('timeupdate', () => {
             highlightCurrentText(audioPlayer.currentTime);
+            updateProgressBar(audioPlayer.currentTime, audioPlayer.duration);
         });
 
         // Keyboard navigation for audio controls
@@ -222,6 +221,7 @@ function resetAudioPlayer() {
     playbackSpeedButton.hidden = true;
     rewindButton.hidden = true;
     forwardButton.hidden = true;
+    togglePlayPauseButton.style.backgroundSize = '0% 100%'; // Reset progress bar
 }
 
 function generateUUID() {
@@ -258,4 +258,9 @@ function getWordTimeMapping() {
     // Placeholder function - implement your logic to map word times and bounding boxes
     // Example: return [{time: 0, x: 10, y: 20, width: 100, height: 20}, ...];
     return [];
+}
+
+function updateProgressBar(currentTime, duration) {
+    const progressPercentage = (currentTime / duration) * 100;
+    togglePlayPauseButton.style.backgroundSize = `${progressPercentage}% 100%`;
 }
