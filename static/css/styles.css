@@ -18,6 +18,9 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 10px 20px;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
 }
 
 header h1 {
@@ -30,11 +33,20 @@ header h1 {
     margin-left: 20px;
 }
 
+#audioPlayer {
+    width: 250px;
+    height: 30px;
+    border: 2px solid #FFF;
+    border-radius: 5px;
+    background-color: #FFF;
+}
+
 main {
     display: flex;
     width: 100%;
     padding: 20px;
     max-width: 1200px;
+    margin-top: 80px; /* Adjust for the fixed header */
 }
 
 .sidebar {
@@ -45,10 +57,10 @@ main {
     background-color: #f5f5dc;
     padding: 20px;
     border-right: 2px solid #ccc;
-    height: 100vh;
+    height: calc(100vh - 80px); /* Adjust for the fixed header */
     position: fixed;
     left: 0;
-    top: 0;
+    top: 80px; /* Adjust for the fixed header */
     overflow-y: auto;
 }
 
@@ -59,7 +71,7 @@ main {
 }
 
 h2 {
-    font-size: 40px;
+    font-size: 24px;
     margin-bottom: 20px;
     background: linear-gradient(to bottom, #000, #808080);
     -webkit-background-clip: text;
@@ -70,7 +82,6 @@ form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
     width: 100%;
 }
 
@@ -82,7 +93,7 @@ input[type="file"] {
 .audio-controls,
 .additional-controls {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 20px;
     width: 100%;
 }
@@ -104,35 +115,14 @@ input[type="file"] {
     display: inline-block;
     text-align: center;
     cursor: pointer;
-    flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
-    max-width: 350px; /* Ensures buttons do not exceed a certain width */
-}
-
-.audio-controls button {
-    flex-basis: calc(50% - 10px); /* Ensures the button width is half of the parent */
-    max-width: 250px; /* Ensures buttons do not exceed a certain width */
-}
-
-.play-pause-container {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-.play-pause-container button {
-    width: 100%;
-    font-size: 28px; /* Increased font size */
-    padding: 25px 40px; /* Increased padding */
-    border-radius: 12px; /* Rounded corners */
+    margin-bottom: 10px;
 }
 
 .button-group label:hover,
 .button-group button:hover,
 .audio-controls button:hover,
 .additional-controls button:hover,
-.additional-controls a:hover,
-.play-pause-container button:hover {
+.additional-controls a:hover {
     background-color: #d83670;
     transform: scale(1.05);
 }
@@ -169,13 +159,22 @@ input[type="file"] {
     opacity: 0;
 }
 
-#audioPlayer {
-    margin-top: 60px; /* Increase margin to move the audio player lower */
+#imageContainer {
+    position: relative;
+    max-width: 100%;
+}
+
+#uploadedImage {
     width: 100%;
-    height: 50px;
-    border: 2px solid #000; /* Add border for contrast */
-    border-radius: 10px; /* Rounded corners for a better look */
-    background-color: #FFF; /* Background color for contrast */
+    height: auto;
+}
+
+#highlightBox {
+    position: absolute;
+    border: 2px solid red; /* Highlight color */
+    pointer-events: none; /* Ensure it doesn't interfere with interactions */
+    display: none; /* Initially hidden */
+    z-index: 10; /* Ensure it is above the image */
 }
 
 #languageSelect {
@@ -204,23 +203,4 @@ input[type="file"] {
     clip: rect(0, 0, 0, 0);
     clip-path: inset(50%);
     white-space: nowrap;
-}
-
-/* Image and Text Overlay */
-#imageContainer {
-    position: relative;
-    max-width: 100%;
-}
-
-#uploadedImage {
-    width: 100%;
-    height: auto;
-}
-
-#highlightBox {
-    position: absolute;
-    border: 2px solid red; /* Highlight color */
-    pointer-events: none; /* Ensure it doesn't interfere with interactions */
-    display: none; /* Initially hidden */
-    z-index: 10; /* Ensure it is above the image */
 }

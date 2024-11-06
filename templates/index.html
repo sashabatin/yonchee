@@ -9,6 +9,7 @@
 <body>
     <header>
         <h1>Yonchee</h1>
+        <audio id="audioPlayer" controls></audio>
     </header>
     <main>
         <div class="sidebar" id="sidebar">
@@ -22,15 +23,12 @@
                 <p id="fileInputHelp">If you encounter issues selecting a photo, please try using a different browser or update your current browser.</p>
                 <div class="audio-controls">
                     <button id="rewindButton">Rewind</button>
+                    <button id="togglePlayPauseButton">Play</button>
                     <button id="forwardButton">Forward</button>
                 </div>
-                <div class="play-pause-container">
-                    <button id="togglePlayPauseButton">Play</button>
-                </div>
-                <audio id="audioPlayer" controls></audio>
                 <div class="additional-controls">
-                    <a id="downloadButton">Download</a>
                     <button id="playbackSpeedButton">Speed: 1x</button>
+                    <a id="downloadButton">Download</a>
                 </div>
             </form>
             <div id="liveRegion" aria-live="polite"></div>
