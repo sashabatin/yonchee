@@ -11,8 +11,8 @@ const languageSelect = document.getElementById('languageSelect');
 const liveRegion = document.getElementById('liveRegion');
 const uploadedImage = document.getElementById('uploadedImage');
 const highlightBox = document.getElementById('highlightBox');
-const popup = document.getElementById('popup');
-const closeButton = document.querySelector('.close-button');
+const sidebar = document.getElementById('sidebar');
+const content = document.getElementById('content');
 
 const translations = {
     en: {
@@ -110,9 +110,6 @@ form.addEventListener('submit', function(event) {
             const imageUrl = URL.createObjectURL(fileInput.files[0]);
             uploadedImage.src = imageUrl;
             uploadedImage.style.display = 'block';
-
-            // Open the popup
-            popup.style.display = 'block';
 
             // Reset file input
             document.getElementById('fileInput').value = '';
@@ -262,15 +259,3 @@ function getWordTimeMapping() {
     // Example: return [{time: 0, x: 10, y: 20, width: 100, height: 20}, ...];
     return [];
 }
-
-// Close the popup when the close button is clicked
-closeButton.addEventListener('click', () => {
-    popup.style.display = 'none';
-});
-
-// Close the popup when clicking outside of the popup content
-window.addEventListener('click', (event) => {
-    if (event.target === popup) {
-        popup.style.display = 'none';
-    }
-});
