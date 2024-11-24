@@ -101,7 +101,7 @@ stages:
             az webapp config appsettings set \
               --name yonchee-staging \
               --resource-group yonchee_rg \
-              --settings OCR_API_KEY=$(OCR_API_KEY) 
+              --settings OCR_API_KEY=$(OCR_API_KEY) \
                          AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) \
                          AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION) \
                          DOCUMENT_INTELLIGENCE_KEY=$(DOCUMENT_INTELLIGENCE_KEY) \
@@ -176,7 +176,7 @@ stages:
             az webapp config appsettings set \
               --name yonchee \
               --resource-group yonchee_rg \
-              --settings OCR_API_KEY=$(OCR_API_KEY) 
+              --settings OCR_API_KEY=$(OCR_API_KEY) \
                          AZURE_SPEECH_KEY=$(AZURE_SPEECH_KEY) \
                          AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION) \
                          DOCUMENT_INTELLIGENCE_KEY=$(DOCUMENT_INTELLIGENCE_KEY) \
