@@ -9,44 +9,44 @@
 <body>
     <header>
         <h1>Yonchee</h1>
-        <audio id="audioPlayer" controls></audio>
+        <select id="languageSelect">
+            <option value="en">English</option>
+            <option value="uk">Ukrainian</option>
+            <option value="ru">Russian</option>
+            <option value="es">Spanish</option>
+        </select>
     </header>
     <main>
-        <div class="sidebar" id="sidebar">
+        <div class="center-content">
             <h2>Text to Speech Service</h2>
+            <div id="imageContainer">
+                <img id="uploadedImage" src="" alt="Uploaded Image" style="display:none;">
+            </div>
+        </div>
+        <div class="left-buttons">
             <form id="uploadForm">
                 <div class="button-group">
                     <label for="fileInput">Select File</label>
                     <input type="file" id="fileInput" name="image" accept="image/*" required>
                     <button id="makeMagicButton" type="submit">Make Magic</button>
                 </div>
-                <p id="fileInputHelp">If you encounter issues selecting a photo, please try using a different browser or update your current browser.</p>
-                <div class="audio-controls">
-                    <button id="rewindButton">Rewind</button>
-                    <button id="togglePlayPauseButton">Play</button>
-                    <button id="forwardButton">Forward</button>
-                </div>
-                <div class="additional-controls">
-                    <button id="playbackSpeedButton">Speed: 1x</button>
-                    <a id="downloadButton">Download</a>
-                </div>
             </form>
+            <div class="audio-controls">
+                <button id="togglePlayPauseButton">Play</button>
+                <button id="rewindButton">Rewind</button>
+                <button id="forwardButton">Forward</button>
+            </div>
+            <div class="additional-controls">
+                <button id="playbackSpeedButton">Speed: 1x</button>
+                <a id="downloadButton">Download</a>
+            </div>
             <div id="liveRegion" aria-live="polite"></div>
         </div>
         <div class="content" id="content">
-            <div id="imageContainer">
-                <img id="uploadedImage" src="" alt="Uploaded Image">
-                <div id="highlightBox"></div>
-            </div>
+            <div id="highlightBox"></div>
         </div>
     </main>
-    <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="uk">Ukrainian</option>
-        <option value="ru">Russian</option>
-        <option value="es">Spanish</option>
-    </select>
-
+    <audio id="audioPlayer" style="display: none;"></audio>
     <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
 </body>
 </html>

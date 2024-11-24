@@ -33,12 +33,16 @@ header h1 {
     margin-left: 20px;
 }
 
-#audioPlayer {
-    width: 250px;
-    height: 30px;
-    border: 2px solid #FFF;
-    border-radius: 5px;
-    background-color: #FFF;
+#languageSelect {
+    padding: 15px 30px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: linear-gradient(to right, #007BFF, #f5f5dc);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 20px; /* Adjusted to align with Yonchee */
 }
 
 main {
@@ -49,14 +53,27 @@ main {
     margin-top: 80px; /* Adjust for the fixed header */
 }
 
-.sidebar {
+.center-content {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.center-content h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    background: linear-gradient(to bottom, #000, #808080);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.left-buttons {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     width: 300px;
-    background-color: #f5f5dc;
+    background: linear-gradient(to bottom, #FFEB3B, #FFF); /* Same background as main */
     padding: 20px;
-    border-right: 2px solid #ccc;
     height: calc(100vh - 80px); /* Adjust for the fixed header */
     position: fixed;
     left: 0;
@@ -68,14 +85,6 @@ main {
     margin-left: 320px;
     flex: 1;
     padding: 20px;
-}
-
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    background: linear-gradient(to bottom, #000, #808080);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
 }
 
 form {
@@ -103,19 +112,21 @@ input[type="file"] {
 .audio-controls button,
 .additional-controls button,
 .additional-controls a {
-    background-color: #ff4081;
+    background-color: #007BFF; /* Blue color */
     color: #FFF;
     font-size: 24px; /* Increased font size */
     padding: 20px 40px; /* Increased padding */
     border: 2px solid #FFF;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease, transform 0.2s;
+    transition: background-color 0.3s ease, transform 0.2s, background-size 0.2s linear; /* Added transition for background-size */
     text-decoration: none;
     display: inline-block;
     text-align: center;
     cursor: pointer;
     margin-bottom: 10px;
+    position: relative; /* For progress bar */
+    overflow: hidden;   /* For progress bar */
 }
 
 .button-group label:hover,
@@ -123,14 +134,14 @@ input[type="file"] {
 .audio-controls button:hover,
 .additional-controls button:hover,
 .additional-controls a:hover {
-    background-color: #d83670;
+    background-color: #0056b3;
     transform: scale(1.05);
 }
 
 /* Gradient and animation for Play/Pause and Make Magic buttons */
 #togglePlayPauseButton,
 #makeMagicButton {
-    background: linear-gradient(to right, #007BFF, #FFEB3B);
+    background: red; /* Red color by default */
     position: relative;
     overflow: hidden;
     z-index: 1;
@@ -159,14 +170,25 @@ input[type="file"] {
     opacity: 0;
 }
 
+/* Progress bar inside the play/pause button */
+#togglePlayPauseButton {
+    background: red; /* Red color by default */
+    background-image: linear-gradient(to right, blue, blue);
+    background-size: 0% 100%; /* Initial size */
+    background-repeat: no-repeat;
+    transition: background-size 0.2s linear; /* Smooth transition for progress bar */
+}
+
 #imageContainer {
     position: relative;
     max-width: 100%;
+    margin-top: 20px; /* Add some margin for spacing */
 }
 
 #uploadedImage {
     width: 100%;
     height: auto;
+    display: none; /* Initially hidden */
 }
 
 #highlightBox {
@@ -175,20 +197,6 @@ input[type="file"] {
     pointer-events: none; /* Ensure it doesn't interfere with interactions */
     display: none; /* Initially hidden */
     z-index: 10; /* Ensure it is above the image */
-}
-
-#languageSelect {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    padding: 15px 30px;
-    font-size: 20px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    background: linear-gradient(to right, #007BFF, #f5f5dc);
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
 }
 
 /* Style for the live region */
