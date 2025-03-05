@@ -11,8 +11,10 @@ Jinja2==3.1.4
 MarkupSafe==3.0.1
 packaging==24.1
 requests==2.32.3
-urllib3==1.26.15  # Corrected version
+urllib3==1.26.15
 Werkzeug==3.0.4
-azure-cognitiveservices-speech==1.30.0  # Added Azure Cognitive Services Speech SDK
-python-dotenv==0.19.2  # Optional for easier local development
-waitress==2.1.2  # Added Waitress WSGI server
+azure-cognitiveservices-speech==1.30.0
+azure-ai-formrecognizer==3.3.3  # Add the Azure Form Recognizer SDK
+azure-core==1.26.3  # Add Azure Core SDK, a dependency for Azure SDKs
+python-dotenv==0.19.2
+waitress==2.1.2

@@ -1,10 +1,11 @@
 # Python imports
 from flask import Flask, render_template, request, jsonify, send_file
-import requests
 import azure.cognitiveservices.speech as speechsdk
 import tempfile
 import os
 import logging
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.formrecognizer import DocumentAnalysisClient
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -35,32 +36,29 @@ def upload_image():
         logger.error(f'Error processing image: {str(e)}')
         return jsonify({'error': str(e)}), 500
 
-# Process image to extract text through the OCR API
+# Process image to extract text through the Document Intelligence API
 def process_image(file):
-    api_endpoint = "https://eastus.api.cognitive.microsoft.com/vision/v3.2/ocr"
-    api_key = os.environ.get('OCR_API_KEY')
-    if not api_key:
-        raise Exception("OCR_API_KEY is not set")
-    headers = {'Ocp-Apim-Subscription-Key': api_key, 'Content-Type': 'application/octet-stream'}
-    params = {'language': 'unk', 'detectOrientation': 'true'}
+    endpoint = os.environ.get('DOCUMENT_INTELLIGENCE_ENDPOINT')
+    key = os.environ.get('DOCUMENT_INTELLIGENCE_KEY')
+    if not endpoint or not key:
+        raise Exception("DOCUMENT_INTELLIGENCE_ENDPOINT or DOCUMENT_INTELLIGENCE_KEY is not set")
 
-    try:
-        response = requests.post(api_endpoint, headers=headers, params=params, data=file.read())
-        response.raise_for_status()
-    except requests.HTTPError as e:
-        logger.error(f"HTTP Error: {response.status_code} - {response.reason}")
-        raise Exception(f"OCR API connection failed: HTTP Error: {response.status_code} - {response.reason}")
-    except requests.RequestException as e:
-        logger.error(f"Request failed: {str(e)}")
-        raise Exception(f"Request failed: {str(e)}")
+    document_analysis_client = DocumentAnalysisClient(
+        endpoint=endpoint, credential=AzureKeyCredential(key)
+    )
 
-    analysis = response.json()
-    if "error" in analysis:
-        error_message = analysis['error']['message']
-        logger.error(f"OCR API Error: {error_message}")
-        raise Exception(f"OCR API Error: {error_message}")
+    # Read file content and send to Azure Document Intelligence
+    poller = document_analysis_client.begin_analyze_document(
+        "prebuilt-read", file.read()
+    )
+    result = poller.result()
 
-    text_output = ' '.join([' '.join([word['text'] for word in line['words']]) for region in analysis.get('regions', []) for line in region['lines']])
+    # Extract text from the result
+    text_output = ''
+    for page in result.pages:
+        for line in page.lines:
+            text_output += line.content + '\n'
+
     return text_output
 
 # Synthesize text into speech using Azure AI
