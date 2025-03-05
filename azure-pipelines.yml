@@ -13,8 +13,8 @@ stages:
   jobs:
   - job: BuildJob
     displayName: 'Build Job'
-    pool: 'yon1'
-      # vmImage: 'ubuntu-latest'
+    pool:
+      vmImage: 'ubuntu-latest'
     steps:
       - task: UsePythonVersion@0
         inputs:
