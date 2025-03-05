@@ -91,6 +91,12 @@ stages:
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
+      # Introduce a delay after deleting WEBSITE_RUN_FROM_PACKAGE
+      - script: |
+          echo "Pausing for 10 seconds after deleting WEBSITE_RUN_FROM_PACKAGE to avoid conflicts."
+          sleep 10
+        displayName: 'Wait after deleting WEBSITE_RUN_FROM_PACKAGE'
+
       - task: AzureCLI@2
         displayName: 'Configure variables'
         inputs:
@@ -106,6 +112,12 @@ stages:
                          AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION) \
                          DOCUMENT_INTELLIGENCE_KEY=$(DOCUMENT_INTELLIGENCE_KEY) \
                          DOCUMENT_INTELLIGENCE_ENDPOINT=$(DOCUMENT_INTELLIGENCE_ENDPOINT)
+
+      # Introduce a delay for app setting changes to propagate
+      - script: |
+          echo "Pausing for 20 seconds to ensure app settings changes take effect before deployment."
+          sleep 20
+        displayName: 'Wait for app settings changes to propagate'
 
       - task: AzureWebApp@1
         displayName: 'Deploy Yonchee Staging app'
@@ -166,6 +178,12 @@ stages:
               --resource-group yonchee_rg \
               --setting-names WEBSITE_RUN_FROM_PACKAGE
 
+      # Introduce a delay after deleting WEBSITE_RUN_FROM_PACKAGE
+      - script: |
+          echo "Pausing for 10 seconds after deleting WEBSITE_RUN_FROM_PACKAGE to avoid conflicts."
+          sleep 10
+        displayName: 'Wait after deleting WEBSITE_RUN_FROM_PACKAGE'
+
       - task: AzureCLI@2
         displayName: 'Configure variables'
         inputs:
@@ -181,6 +199,12 @@ stages:
                          AZURE_SERVICE_REGION=$(AZURE_SERVICE_REGION) \
                          DOCUMENT_INTELLIGENCE_KEY=$(DOCUMENT_INTELLIGENCE_KEY) \
                          DOCUMENT_INTELLIGENCE_ENDPOINT=$(DOCUMENT_INTELLIGENCE_ENDPOINT)
+
+      # Introduce a delay for app setting changes to propagate
+      - script: |
+          echo "Pausing for 20 seconds to ensure app settings changes take effect before deployment."
+          sleep 20
+        displayName: 'Wait for app settings changes to propagate'
 
       - task: AzureWebApp@1
         displayName: 'Deploy Yonchee Production app'
